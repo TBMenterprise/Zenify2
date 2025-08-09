@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mainproject/chat.dart';
 
-class SecondPage extends StatefulWidget {
-  const SecondPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<SecondPage> createState() => _SecondPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SecondPageState extends State<SecondPage> {
+class _SignUpPageState extends State<SignUpPage> {
   bool _isChecked = false;
 
   @override
@@ -113,7 +114,12 @@ class _SecondPageState extends State<SecondPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Add your sign-up logic here
+                // After sign-up logic, navigate to the chat page.
+                // Using pushReplacement prevents the user from navigating back to the sign-up screen.
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF5B95DC),

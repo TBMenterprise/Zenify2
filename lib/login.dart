@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mainproject/chat.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -63,7 +64,11 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Handle login action
+                  // Using pushReplacement prevents the user from navigating back to the login screen.
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ChatPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF5B95DC),

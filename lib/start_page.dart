@@ -2,31 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mainproject/login.dart';
 import 'package:mainproject/sign_up.dart';
 
-
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  // ...existing code...
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ZeniFY',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF5B95DC),
-        fontFamily: 'Literata',
-      ),
-      home: StartPage(
-      )
-    );
-  }
-
-  // ...existing code...
-}
-
-
 class StartPage extends StatelessWidget {
   const StartPage({super.key});
 
@@ -64,10 +39,12 @@ class StartPage extends StatelessWidget {
 
                 SizedBox(height: 100),
                 ElevatedButton(
-                  onPressed: () {Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SecondPage()),
-                  );},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUpPage()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 255, 255, 255),
                     foregroundColor: Colors.black,
@@ -80,14 +57,16 @@ class StartPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF5B95DC),
                     foregroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: Size(double.infinity, 50)
                   ),
                   child: Text(
                     'Login',
