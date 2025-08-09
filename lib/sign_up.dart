@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mainproject/chat.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,122 +12,60 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Color(0xffF1F5FA),
+      // backgroundColor is now inherited from the theme's colorScheme.background
       body: Container(
-          margin: EdgeInsets.only(top: 116, left: 22, right: 22),
+          margin: const EdgeInsets.only(top: 116, left: 22, right: 22),
           child: Center(
           child: SingleChildScrollView(
             child: Column(
               children: [
               Text(
               'Create your account',
-              style: TextStyle(
-                fontFamily: 'Literata',
-                fontSize: 28.43,
-                color: Colors.black,
-              ),
+              style: theme.textTheme.headlineMedium,
             ),
 
-              SizedBox(
+              const SizedBox(
                 height: 124,
                 ),
             TextField(
-              cursorColor: const Color(0xFF5B95DC),
+              cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
-                fillColor: Color(0x24767676),
                 hintText: 'Full Name',
-                hintStyle: TextStyle(
-                  fontFamily: 'Literata',
-                  fontSize: 16,
-                  color: Color(0xFF767676),
-                
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 26, horizontal: 20),
-                
-
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                filled: true,
-                
-                
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextField(
-              cursorColor: const Color(0xFF5B95DC),
+              cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
-                fillColor: Color(0x24767676),
                 hintText: 'Email Address',
-                hintStyle: TextStyle(
-                  fontFamily: 'Literata',
-                  fontSize: 16,
-                  color: Color(0xFF767676),
-                
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 26, horizontal: 20),
-                
-
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                filled: true,
-                
-                
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
              TextField(
               obscureText: true,
-              cursorColor: const Color(0xFF5B95DC),
+              cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
-                fillColor: Color(0x24767676),
                 hintText: 'Password',
-                hintStyle: TextStyle(
-                  fontFamily: 'Literata',
-                  fontSize: 16,
-                  color: Color(0xFF767676),
-                
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 26, horizontal: 20),
-                
-
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                filled: true,
-                
-                
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 28,
             ),
             ElevatedButton(
               onPressed: () {
-                // After sign-up logic, navigate to the chat page.
-                // Using pushReplacement prevents the user from navigating back to the sign-up screen.
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChatPage()),
-                );
+                Navigator.pushReplacementNamed(context, '/chat');
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF5B95DC),
-                foregroundColor: Colors.white,
-                minimumSize: Size(double.infinity, 50),
-              ),
+              // Style is now inherited from the theme
               child: Text(
                 'Sign Up',
-                style: TextStyle(fontFamily: 'Literata', fontSize: 21.33),
+                style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
               ),
             ),
             const SizedBox(height: 8),
@@ -136,18 +73,14 @@ class _SignUpPageState extends State<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'Literata',
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                  text: TextSpan(
+                    style: theme.textTheme.bodyMedium,
                     children: <TextSpan>[
-                      TextSpan(text: 'I have read the '),
+                      const TextSpan(text: 'I have read the '),
                       TextSpan(
                         text: 'Privacy Policy',
                         style: TextStyle(
-                          color: Color(0xFF5B95DC),
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -160,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       _isChecked = value!;
                     });
                   },
-                  activeColor: const Color(0xFF5B95DC),
+                  activeColor: theme.colorScheme.primary,
                 ),
               ],
             ),

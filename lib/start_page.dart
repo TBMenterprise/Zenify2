@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mainproject/login.dart';
-import 'package:mainproject/sign_up.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({super.key});
@@ -9,76 +7,56 @@ class StartPage extends StatelessWidget {
   // ...existing code...
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-        backgroundColor: Color(0xFF8CB2E1),
+        backgroundColor: const Color(0xFF8CB2E1),
         body: Container(
-          margin: EdgeInsets.only(bottom: 60, left: 26, right: 26),
+          margin: const EdgeInsets.only(bottom: 60, left: 26, right: 26),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   'ZeniFY',
-                  style: TextStyle(
-                    fontFamily: 'Literata',
-                    fontSize: 50.52,
-                    color: Colors.white,
-                  ),
+                  style: theme.textTheme.displayLarge,
                 ),
-                SizedBox(height: 72),
+                const SizedBox(height: 72),
                 ClipOval(
                   child: SizedBox(
                     width: 257,
                     height: 257,
-                    child: Image(
-                      image: AssetImage('assets/signInImage.png'),
+                    child: Image.asset(
+                      'assets/signInImage.png',
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-
-                SizedBox(height: 100),
+                const SizedBox(height: 100),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpPage()),
-                    );
-                  },
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    minimumSize: Size(double.infinity, 50),
                   ),
                   child: Text(
                     'Sign up',
-                    style: TextStyle(fontFamily: 'Literata', fontSize: 21.33),
+                    style: theme.textTheme.labelLarge?.copyWith(color: Colors.black),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF5B95DC),
-                    foregroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 50)
-                  ),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                  
+                  // Style is now inherited from the theme
                   child: Text(
                     'Login',
-                    style: TextStyle(fontFamily: 'Literata', fontSize: 21.33),
+                    style: theme.textTheme.labelLarge?.copyWith(color:Colors.white),
                   ),
                 ),
               ],
             ),
           ),
         ), // Empty container for a blank screen
-      );
+        );
   }
-
-  // ...existing code...
 }

@@ -1,40 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:mainproject/start_page.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
 
   @override
-
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
       drawer: Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: const Text(
+              decoration:
+                  BoxDecoration(color: theme.colorScheme.primary),
+              child: Text(
                 'ZeniFY Menu',
-                style: TextStyle(
+                style: theme.textTheme.headlineMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 24,
                 ),
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              leading: Icon(Icons.logout, color: Colors.black),
+              title: Text('Logout', style: theme.textTheme.bodyMedium),
               onTap: () {
                 // To log out, we navigate back to the StartPage and remove all previous routes.
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const StartPage()),
-                  (Route<dynamic> route) => false,
-                );
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (Route<dynamic> route) => false);
               },
             ),
             // You can add other options like 'Profile', 'Settings' etc. here
@@ -53,12 +49,12 @@ class ChatPage extends StatelessWidget {
                 // Use a Builder to get the correct context for Scaffold.of()
                 Builder(
                   builder: (context) => IconButton(
-                    icon: const Icon(Icons.menu, color: Colors.black),
+                    icon: Icon(Icons.menu,color: Colors.black),
                     onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.black),
+                  icon: Icon(Icons.settings, color: Colors.black),
                   onPressed: () {
                     // Handle settings action
                   },
@@ -66,20 +62,16 @@ class ChatPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 112),
-            const Text(
+            Text(
               "What's on your mind, Benjamin?",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Literata',
-                fontSize: 28.43,
-                color: Colors.black,
-              ),
+              style: theme.textTheme.headlineMedium,
             ),
             const SizedBox(height: 124),
             // Additional chat-related widgets will go here.
-            const Expanded(
+            Expanded(
               child: Center(
-                child: Text('Chat content will appear here.'),
+                child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
               ),
             ),
           ]),
