@@ -39,43 +39,78 @@ class ChatPage extends StatelessWidget {
       ),
       // Using SafeArea to avoid UI elements being obscured by system notches.
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-          child: Column(children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Use a Builder to get the correct context for Scaffold.of()
-                Builder(
-                  builder: (context) => IconButton(
-                    icon: Icon(Icons.menu,color: Colors.black),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+        child: Column(children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22.0),
+              child: Column(children: [
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Use a Builder to get the correct context for Scaffold.of()
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: Icon(Icons.menu, color: theme.colorScheme.surface),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.settings, color: theme.colorScheme.surface),
+                      onPressed: () {
+                        // Handle settings action
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 112),
+                Text(
+                  "What's on your mind, Benjamin?",
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 124),
+                // Additional chat-related widgets will go here.
+                Expanded(
+                  child: Center(
+                    child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.settings, color: Colors.black),
-                  onPressed: () {
-                    // Handle settings action
-                  },
+              ]),
+            ),
+          ),
+          SizedBox( height: 60,
+          child :TextField(
+            cursorColor: theme.colorScheme.primary,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: 'Type away',
+              // By default, your theme's input decoration has an invisible border.
+              // To make it visible, you need to define the border for each state.
+              // This is the border when the field is enabled but not focused.
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
                 ),
-              ],
-            ),
-            const SizedBox(height: 112),
-            Text(
-              "What's on your mind, Benjamin?",
-              textAlign: TextAlign.center,
-              style: theme.textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 124),
-            // Additional chat-related widgets will go here.
-            Expanded(
-              child: Center(
-                child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
+              ),
+              // This is the border when the field has focus (is being typed in).
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(100.0),
+                  topRight: Radius.circular(100.0),
+                  bottomLeft: Radius.circular(100.0),
+                  bottomRight: Radius.circular(100.0),
+
+                ),
               ),
             ),
-          ]),
-        ),
+          ),
+          ),
+        ]),
       ),
     );
   }
