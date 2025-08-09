@@ -77,6 +77,10 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
+<<<<<<< HEAD
+=======
+        '/settings': (context) => const SettingsPage(),
+>>>>>>> fa8526683707ec5919d1b17e8e04f81f2a6f1f8c
       },
     );
   }
