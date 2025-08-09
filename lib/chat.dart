@@ -51,12 +51,12 @@ class ChatPage extends StatelessWidget {
                     // Use a Builder to get the correct context for Scaffold.of()
                     Builder(
                       builder: (context) => IconButton(
-                        icon: Icon(Icons.menu, color: theme.colorScheme.surface),
+                        icon: Icon(Icons.menu, color: Colors.black),
                         onPressed: () => Scaffold.of(context).openDrawer(),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.settings, color: theme.colorScheme.surface),
+                      icon: Icon(Icons.settings, color: Colors.black),
                       onPressed: () {
                         Navigator.pushNamed(context, '/settings');
                       },
