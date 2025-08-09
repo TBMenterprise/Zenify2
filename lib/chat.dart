@@ -56,7 +56,7 @@ class ChatPage extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.settings, color: Colors.black),
                   onPressed: () {
-                    // Handle settings action
+                    Navigator.pushNamed(context, '/settings');
                   },
                 ),
               ],
