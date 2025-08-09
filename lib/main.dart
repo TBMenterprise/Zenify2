@@ -3,6 +3,7 @@ import 'package:mainproject/chat.dart';
 import 'package:mainproject/login.dart';
 import 'start_page.dart';
 import 'package:mainproject/sign_up.dart';
+import 'package:mainproject/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
+        '/settings': (context) => const SettingsPage(),
       },
     );
   }
