@@ -82,7 +82,7 @@ class SettingsPage extends StatelessWidget {
               title: Center(
                 child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/login');
+                    Navigator.of(context).pushReplacementNamed('/');
                   },
                   child: Text(
                     'Log Out',
