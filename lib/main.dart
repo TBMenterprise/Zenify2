@@ -1,11 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mainproject/chat.dart';
-import 'package:mainproject/login.dart';
+import 'chat.dart';
+import 'login.dart';
 import 'start_page.dart';
-import 'package:mainproject/sign_up.dart';
-import 'package:mainproject/settings.dart';
+import 'sign_up.dart';
+import 'settings.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -22,7 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF5B95DC),
           surface: const Color(0xffF1F5FA),
-          primary: const Color(0xFF5B95DC)
+          primary: const Color(0xFF5B95DC),
         ),
         fontFamily: 'Literata',
         textTheme: const TextTheme(
@@ -41,10 +46,7 @@ class MyApp extends StatelessWidget {
             fontSize: 16,
             color: Colors.black87,
           ),
-          labelLarge: TextStyle(
-            fontFamily: 'Literata',
-            fontSize: 21.33,
-          ),
+          labelLarge: TextStyle(fontFamily: 'Literata', fontSize: 21.33),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -59,8 +61,10 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0x24767676),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 26, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 26,
+            horizontal: 20,
+          ),
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(15),
@@ -72,9 +76,19 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/',
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            return const ChatPage();
+          } else {
+            return const StartPage();
+          }
+        },
+      ),
       routes: {
-        '/': (context) => const StartPage(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
