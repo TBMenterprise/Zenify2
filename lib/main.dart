@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mainproject/chat.dart';
-import 'package:mainproject/login.dart';
+import 'chat.dart';
+import 'login.dart';
 import 'start_page.dart';
-import 'package:mainproject/sign_up.dart';
-import 'package:mainproject/settings.dart';
+import 'sign_up.dart';
+import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

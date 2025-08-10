@@ -53,11 +53,11 @@ class SettingsPage extends StatelessWidget {
             ),
             SizedBox(height: 25),
             ...[
-              {'title': 'About Us'},
+              {'title': 'Update Username'},
+              {'title': 'Change Password'},
+              {'title': 'Support Us'},
               {'title': 'Help & Support'},
-              {'title': 'FAQ'},
-              {'title': 'Terms & Conditions'},
-              {'title': 'Privacy Policy'},
+              {'title': 'Delete Account'},
             ].map(
               (item) => Column(
                 children: [
