@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'auth_services.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -28,6 +29,7 @@ class ChatPage extends StatelessWidget {
               leading: Icon(Icons.logout, color: Colors.black),
               title: Text('Logout', style: theme.textTheme.bodyMedium),
               onTap: () {
+                authService.value.signOut();
                 // To log out, we navigate back to the StartPage and remove all previous routes.
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/', (Route<dynamic> route) => false);
