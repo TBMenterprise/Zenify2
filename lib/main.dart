@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_layout.dart';
+
 import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'login.dart';
-import 'start_page.dart';
+
 import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -76,18 +77,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData) {
-            return const ChatPage();
-          } else {
-            return const StartPage();
-          }
-        },
-      ),
+      home: const AuthLayout(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
