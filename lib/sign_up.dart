@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_services.dart';
@@ -18,6 +19,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void _signUp() async {
     if (_formKey.currentState!.validate()) {
+      if (!_isChecked) {
+        setState(() {
+          _errorMessage = 'Please accept the Privacy Policy to continue.';
+        });
+        return;
+      }
       try {
         setState(() {
           _errorMessage = '';
@@ -70,7 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                if (!EmailValidator.validate(value)) {
                   return 'Please enter a valid email';
                 }
                 return null;

@@ -1,11 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_layout.dart';
+
 import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'login.dart';
-import 'start_page.dart';
+
 import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'reset_password.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +43,7 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Literata',
             fontSize: 28.43,
             color: Colors.black,
+            fontWeight: FontWeight.normal,
           ),
           bodyMedium: TextStyle(
             fontFamily: 'Literata',
@@ -76,23 +80,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData) {
-            return const ChatPage();
-          } else {
-            return const StartPage();
-          }
-        },
-      ),
+      home: const AuthLayout(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
         '/settings': (context) => const SettingsPage(),
+        '/reset_password': (context) => const ResetPasswordPage(),
       },
     );
   }
