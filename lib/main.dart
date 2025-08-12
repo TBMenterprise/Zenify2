@@ -8,6 +8,8 @@ import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'reset_password.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Literata',
             fontSize: 28.43,
             color: Colors.black,
+            fontWeight: FontWeight.normal,
           ),
           bodyMedium: TextStyle(
             fontFamily: 'Literata',
@@ -83,6 +86,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
         '/settings': (context) => const SettingsPage(),
+        '/reset_password': (context) => const ResetPasswordPage(),
       },
     );
   }

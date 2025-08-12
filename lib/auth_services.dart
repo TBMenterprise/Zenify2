@@ -35,7 +35,16 @@ class AuthService {
   }
 
   Future<void> resetPassword({required String email}) async {
-    await firebaseAuth.sendPasswordResetEmail(email: email);
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        // Rethrow the exception to be handled in the UI
+        throw FirebaseAuthException(code: 'user-not-found');
+      }
+      // Handle other potential errors or rethrow them
+      rethrow;
+    }
   }
 
   Future<void> updateUsername({required String username}) async {
