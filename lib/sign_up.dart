@@ -2,6 +2,9 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -34,15 +37,16 @@ class _SignUpPageState extends State<SignUpPage> {
           password: _passwordController.text,
         );
         if (mounted) {
+          // Navigation is handled by AuthLayout listening to auth state changes.
           Navigator.pushReplacementNamed(context, '/chat');
-        }
-      } on FirebaseAuthException catch (e) {
+      }} on FirebaseAuthException catch (e) {
         setState(() {
           _errorMessage = e.message ?? 'An error occurred.';
         });
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,23 +55,92 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       // backgroundColor is now inherited from the theme's colorScheme.background
       body: Container(
-          margin: const EdgeInsets.only(top: 116, left: 22, right: 22),
+          margin: const EdgeInsets.only(top: 20, left: 22, right: 22, bottom: 20),
           child: Center(
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
               children: [
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: backbutton(),
+                  ),
+              SizedBox( height: 116),
               Text(
               'Create your account',
               style: theme.textTheme.headlineMedium,
             ),
-
-              const SizedBox(
+              
+            const SizedBox(
                 height: 124,
                 ),
-
-            TextFormField(
+            googleButton(),
+            const SizedBox(
+              height: 28,
+            ),
+            enteremail(),
+            const SizedBox(
+              height: 20,
+            ),
+            enterpassword(),
+            const SizedBox(
+              height: 28,
+            ),
+            signupbutton(),
+            if (_errorMessage.isNotEmpty)
+               erroRmessage(),
+            const SizedBox(height: 8),
+            readPrivacypol(),
+              ],
+           ),
+          ),
+         ),
+        ),
+      ),
+    );
+  } 
+  Widget backbutton() {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pushNamed(context, '/');
+      },
+    );
+  }
+  Widget googleButton() {
+    final theme = Theme.of(context);
+    return ElevatedButton(
+      onPressed: () {
+        // TODO: Implement Google Sign-In
+      },
+      style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: BorderSide(color: theme.colorScheme.primary, width: 2),
+          foregroundColor: Colors.black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+      // The Row's mainAxisAlignment will handle the centering.
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/bluegoogleicon.svg',
+            height: 22.0,
+          ),
+          const SizedBox(width: 12.0),
+          const Text(
+            'Continue with Google',
+            style: TextStyle(fontSize: 17),
+          ),
+        ],
+      ),
+  );
+  }
+  Widget enteremail(){
+    final theme = Theme.of(context);
+    return
+    TextFormField(
               controller: _emailController,
               cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
@@ -82,11 +155,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 }
                 return null;
               },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-             TextFormField(
+            );
+  }
+  Widget enterpassword(){
+    final theme = Theme.of(context);
+    return TextFormField(
               controller: _passwordController,
               obscureText: true,
               cursorColor: theme.colorScheme.primary,
@@ -99,28 +172,34 @@ class _SignUpPageState extends State<SignUpPage> {
                 }
                 return null;
               },
-            ),
-            const SizedBox(
-              height: 28,
-            ),
-            ElevatedButton(
+            );
+  }
+  Widget signupbutton(){
+    final theme = Theme.of(context);
+    return ElevatedButton(
               onPressed: _signUp,
               // Style is now inherited from the theme
               child: Text(
                 'Sign Up',
                 style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
               ),
-            ),
-            if (_errorMessage.isNotEmpty)
-              Padding(
+            );
+          
+  }
+  Widget erroRmessage(){ 
+    return
+    Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   _errorMessage,
                   style: const TextStyle(color: Colors.redAccent),
                 ),
-              ),
-            const SizedBox(height: 8),
-            Row(
+              );
+
+  }
+  Widget readPrivacypol(){
+    final theme = Theme.of(context);
+    return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RichText(
@@ -147,13 +226,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   activeColor: theme.colorScheme.primary,
                 ),
               ],
-            ),
-              ],
-           ),
-          ),
-         ),
-        ),
-      ),
-    );
+            );
+
   }
+    
 }

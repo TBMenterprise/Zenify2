@@ -36,6 +36,7 @@ dependencies:
   firebase_core: ^4.0.0
   firebase_auth: ^6.0.0
   email_validator: ^3.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +57,7 @@ flutter:
   #To add assets to your application, add an assets section, like this:
   assets:
     - assets/signInImage.png
+    - assets/bluegoogleicon.svg
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
