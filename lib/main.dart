@@ -1,14 +1,13 @@
 import 'auth_layout.dart';
-
 import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'login.dart';
-
 import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'reset_password.dart';
+import 'start_page.dart'; 
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,6 +86,7 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const ChatPage(),
         '/settings': (context) => const SettingsPage(),
         '/reset_password': (context) => const ResetPasswordPage(),
+        '/start_page': (context) => const StartPage(),
       },
     );
   }

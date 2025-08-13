@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushReplacementNamed(context, '/start_page');
       },
     );
   }

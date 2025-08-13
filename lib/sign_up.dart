@@ -104,7 +104,8 @@ class _SignUpPageState extends State<SignUpPage> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        Navigator.pushNamed(context, '/');
+        Navigator.pushNamed(context, '/start_page');
+
       },
     );
   }

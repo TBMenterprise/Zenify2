@@ -128,7 +128,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 ),
               ),
               child: Text(
-                'Reset Password',
+                'Forgot Password',
                 style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
               ),
             ),
