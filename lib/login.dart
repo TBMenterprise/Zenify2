@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       // backgroundColor is inherited from theme
       body: Container(
-        margin: const EdgeInsets.only(top: 20, left: 22, right: 22),
+        margin: const EdgeInsets.only(top: 10, left: 22, right: 22),
         child: Center(
           child: SingleChildScrollView(
             child: Form(

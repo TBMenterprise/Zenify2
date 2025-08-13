@@ -79,8 +79,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const AuthLayout(),
+      initialRoute: '/auth_layout',
       routes: {
+        '/auth_layout': (context) => const AuthLayout(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
         '/chat': (context) => const ChatPage(),
@@ -91,3 +92,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

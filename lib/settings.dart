@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
       await AuthService().signOut();
       if (!context.mounted) return;
       Navigator.of(context)
-          .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+          .pushNamedAndRemoveUntil('/start_page', (Route<dynamic> route) => false);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
