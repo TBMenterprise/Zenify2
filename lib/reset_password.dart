@@ -63,13 +63,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Forgot Password',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: Colors.black,
-                  fontFamily: 'Literata',
-                ),
+            Text(
+              'Forgot Password',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: Colors.black,
+                fontFamily: 'Literata',
               ),
             ),
             const SizedBox(height: 10),
@@ -128,7 +126,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 ),
               ),
               child: Text(
-                'Forgot Password',
+                'Reset Password',
                 style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
               ),
             ),
