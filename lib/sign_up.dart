@@ -69,6 +69,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
             TextFormField(
               controller: _emailController,
+              maxLength: 128,
+              buildCounter: (BuildContext context, { int? currentLength, bool? isFocused, int? maxLength }) => null,
               cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
                 hintText: 'Email Address',
@@ -88,6 +90,8 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
              TextFormField(
               controller: _passwordController,
+              maxLength: 128,
+              buildCounter: (BuildContext context, { int? currentLength, bool? isFocused, int? maxLength }) => null,
               obscureText: true,
               cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_services.dart';
+import 'package:mainproject/update_password.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -116,7 +117,16 @@ class SettingsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     tileColor: Colors.white,
-                    onTap: () {},
+                    onTap: () {
+                      if (item['title'] == 'Change Password') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UpdatePasswordPage(),
+                          ),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(height: 12),
                 ],

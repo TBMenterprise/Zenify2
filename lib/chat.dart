@@ -45,40 +45,40 @@ class ChatPage extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 22.0),
-              child: Column(children: [
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Use a Builder to get the correct context for Scaffold.of()
-                    Builder(
-                      builder: (context) => IconButton(
-                        icon: Icon(Icons.menu, color: Colors.black),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Use a Builder to get the correct context for Scaffold.of()
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.black),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.settings, color: Colors.black),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/settings');
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 112),
-                Text(
-                  "What's on your mind, Benjamin?",
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 124),
-                // Additional chat-related widgets will go here.
-                Expanded(
-                  child: Center(
+                      IconButton(
+                        icon: const Icon(Icons.settings, color: Colors.black),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/settings');
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 112),
+                  Text(
+                    "What's on your mind, Benjamin?",
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 124),
+                  // Additional chat-related widgets will go here.
+                  Center(
                     child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
                   ),
-                ),
-              ]),
+                ]),
+              ),
             ),
           ),
           SizedBox( height: 60,
