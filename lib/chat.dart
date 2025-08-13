@@ -32,7 +32,7 @@ class ChatPage extends StatelessWidget {
                 authService.value.signOut();
                 // To log out, we navigate back to the StartPage and remove all previous routes.
                 Navigator.pushNamedAndRemoveUntil(
-                    context, '/', (Route<dynamic> route) => false);
+                    context, '/start_page', (Route<dynamic> route) => false);
               },
             ),
             // You can add other options like 'Profile', 'Settings' etc. here
