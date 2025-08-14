@@ -31,9 +31,8 @@ class _LoginPageState extends State<LoginPage> {
         email: controllerEmail.text,
         password: controllerPassword.text,
       );
-      if (context.mounted) {
-        Navigator.of(context).pushReplacementNamed('/chat');
-      }
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/chat');
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message ?? 'An unknown error occurred.';
@@ -66,13 +65,11 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   if (errorMessage.isNotEmpty)
                    _errorMessage(),
-                  const SizedBox(height: 16.0),
                   _loginButton(),
                   const SizedBox(height: 9),
                   _resetPassword(),
                   const SizedBox(height: 60),
-                  donthaveanaccount(),
-                  const SizedBox(height: 16),
+
                 ],
               ),
             ),
@@ -82,27 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-   Widget donthaveanaccount () {
-    final theme = Theme.of(context);
-    return ElevatedButton(
-      onPressed: () {Navigator.pushNamed(context, '/signup');
-      },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          side: BorderSide(color: theme.colorScheme.primary, width: 2),
-          foregroundColor: Colors.black,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-      // The Row's mainAxisAlignment will handle the centering.
-      child: 
-          const Text(
-            "Create new account",
-            style: TextStyle(fontSize: 17),
-          ),
-        
-      
-  );
-  }
+
 
    Widget googleButton() {
     final theme = Theme.of(context);
