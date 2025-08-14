@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
       await AuthService().signOut();
       if (!context.mounted) return;
       Navigator.of(context)
-          .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+          .pushNamedAndRemoveUntil('/start_page', (Route<dynamic> route) => false);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -67,7 +67,7 @@ class SettingsPage extends StatelessWidget {
         shadowColor: Colors.transparent,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 20.0),
         child: ListView(
           children: [
             Card(
@@ -76,7 +76,7 @@ class SettingsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 22.0),
                 child: Column(
                   children: [
                     CircleAvatar(

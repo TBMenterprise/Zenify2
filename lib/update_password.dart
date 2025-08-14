@@ -73,7 +73,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+        padding: const EdgeInsets.symmetric(horizontal: 22.0,vertical: 24.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
