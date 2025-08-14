@@ -154,6 +154,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             builder: (context) => const UpdatePasswordPage(),
                           ),
                         );
+                      } else if (item['title'] == 'Delete Account') {
+                        Navigator.pushNamed(context, '/delete_account');
                       }
                     },
                   ),

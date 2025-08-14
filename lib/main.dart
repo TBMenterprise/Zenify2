@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'reset_password.dart';
 import 'start_page.dart';
 import 'user_profile_setup.dart'; 
+import 'delete_account.dart'; 
 
 
 void main() async {
@@ -90,6 +91,7 @@ class MyApp extends StatelessWidget {
         '/reset_password': (context) => const ResetPasswordPage(),
         '/start_page': (context) => const StartPage(),
         '/user_profile_setup': (context) => const UserProfileSetupPage(),
+        '/delete_account': (context) => const DeleteAccountPage(),
       },
     );
   }

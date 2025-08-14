@@ -23,6 +23,15 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
 
   void _saveProfile() async {
     if (_formKey.currentState!.validate()) {
+      if (_selectedAge! < 18) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You must be at least 18 years old.')),
+          );
+        }
+        return;
+      }
+      
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await authService.value.saveUserProfile(
@@ -31,7 +40,11 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
           age: _selectedAge!, // Use _selectedAge directly
         );
         if (mounted) {
-          Navigator.pushReplacementNamed(context, '/chat');
+          Navigator.pushNamedAndRemoveUntil(
+            context, 
+            '/chat',
+            (route) => false,
+          );
         }
       } else {
         // Handle case where user is not logged in (shouldn't happen after signup)
@@ -100,6 +113,9 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
                   validator: (value) {
                     if (value == null) {
                       return 'Please select your age';
+                    }
+                    if (value < 18) {
+                      return 'You must be at least 18 years old';
                     }
                     return null;
                   },
