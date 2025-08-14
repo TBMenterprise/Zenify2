@@ -6,7 +6,8 @@ import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'reset_password.dart';
-import 'start_page.dart'; 
+import 'start_page.dart';
+import 'user_profile_setup.dart'; 
 
 
 void main() async {
@@ -84,10 +85,11 @@ class MyApp extends StatelessWidget {
         '/auth_layout': (context) => const AuthLayout(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
-        '/chat': (context) => const ChatPage(),
+        '/chat': (context) => ChatPage(),
         '/settings': (context) => const SettingsPage(),
         '/reset_password': (context) => const ResetPasswordPage(),
         '/start_page': (context) => const StartPage(),
+        '/user_profile_setup': (context) => const UserProfileSetupPage(),
       },
     );
   }

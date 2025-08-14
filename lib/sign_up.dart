@@ -38,7 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
         );
         if (mounted) {
           // Navigation is handled by AuthLayout listening to auth state changes.
-          Navigator.pushReplacementNamed(context, '/chat');
+          Navigator.pushReplacementNamed(context, '/user_profile_setup');
       }} on FirebaseAuthException catch (e) {
         setState(() {
           _errorMessage = e.message ?? 'An error occurred.';
@@ -88,8 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
             const SizedBox(height: 8),
             readPrivacypol(),
             const SizedBox(height: 60),
-            alreadyhaveanaccount(),
-            const SizedBox(height: 16),
+
               ],
            ),
           ),
@@ -98,24 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   } 
-  Widget alreadyhaveanaccount() {
-    final theme = Theme.of(context);
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/login');
-      },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          side: BorderSide(color: theme.colorScheme.primary, width: 2),
-          foregroundColor: Colors.black,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-      child: const Text(
-        'Already have an account? Log in',
-        style: TextStyle(fontSize: 17),
-      ),
-    );
-  }
+
   Widget googleButton() {
     final theme = Theme.of(context);
     return ElevatedButton(

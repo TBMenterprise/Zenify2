@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
 class AuthService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   User? get currentUser => firebaseAuth.currentUser;
@@ -64,6 +66,18 @@ class AuthService {
 
   Future<void> updateUsername({required String username}) async {
     await currentUser!.updateDisplayName(username);
+  }
+
+  Future<void> saveUserProfile({
+    required String uid,
+    required String name,
+    required int age,
+  }) async {
+    await _firestore.collection('users').doc(uid).set({
+      'name': name,
+      'age': age,
+      'email': currentUser!.email, // Assuming email is always available
+    });
   }
 
   Future<void> deleteAccount({

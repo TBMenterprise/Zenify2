@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'auth_services.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  _ChatPageState();
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +102,28 @@ class ChatPage extends StatelessWidget {
     }
     Widget welcomemessage(BuildContext context){
       final theme = Theme.of(context);
-      return Text(
-                    "What's on your mind, Benjamin?",
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineMedium,
-                  );
-      }
+      return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          final userData = snapshot.data!.data() as Map<String, dynamic>;
+          final String userName = userData['name'] ?? 'User';
+          return Text(
+            'Welcome, $userName!',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.headlineMedium,
+          );
+        },
+      );
+    }
     Widget chatContent(BuildContext context){
       final theme = Theme.of(context);
       return Center(

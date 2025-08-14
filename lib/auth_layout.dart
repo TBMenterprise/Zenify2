@@ -15,7 +15,7 @@ class AuthLayout extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const AppLoadingPage();
         } else if (snapshot.hasData) {
-          return const ChatPage();
+          return ChatPage();
         } else {
           return const StartPage();
         }

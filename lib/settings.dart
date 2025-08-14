@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'auth_services.dart';
 import 'package:mainproject/update_password.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
 
   void _signOutAndNavigate(BuildContext context) async {
     try {
@@ -70,32 +77,54 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 20.0),
         child: ListView(
           children: [
-            Card(
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 22.0),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundImage: AssetImage('assets/signInImage.png'),
+            FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: \${snapshot.error}');
+                }
+                final userData = snapshot.data!.data() as Map<String, dynamic>;
+                return Card(
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 24.0, horizontal: 22.0),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundImage:
+                              AssetImage('assets/signInImage.png'),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          userData['name'] ?? 'No name',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          userData['email'] ?? 'No email',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Age: ${userData['age'] ?? 'Not specified'}',
+                           style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Tameem',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'tameem@gmail.com',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             SizedBox(height: 25),
             ...[
