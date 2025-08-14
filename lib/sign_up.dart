@@ -55,25 +55,20 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       // backgroundColor is now inherited from the theme's colorScheme.background
       body: Container(
-          margin: const EdgeInsets.only(top: 20, left: 22, right: 22, bottom: 20),
+          margin: const EdgeInsets.only(top:60, left: 22, right: 22,),
           child: Center(
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
               children: [
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: backbutton(),
-                  ),
-              SizedBox( height: 116),
               Text(
               'Create your account',
               style: theme.textTheme.headlineMedium,
             ),
               
             const SizedBox(
-                height: 124,
+                height: 80,
                 ),
             googleButton(),
             const SizedBox(
@@ -92,6 +87,9 @@ class _SignUpPageState extends State<SignUpPage> {
                erroRmessage(),
             const SizedBox(height: 8),
             readPrivacypol(),
+            const SizedBox(height: 60),
+            alreadyhaveanaccount(),
+            const SizedBox(height: 16),
               ],
            ),
           ),
@@ -100,13 +98,22 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   } 
-  Widget backbutton() {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
+  Widget alreadyhaveanaccount() {
+    final theme = Theme.of(context);
+    return ElevatedButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/start_page');
-
+        Navigator.pushNamed(context, '/login');
       },
+      style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: BorderSide(color: theme.colorScheme.primary, width: 2),
+          foregroundColor: Colors.black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+      child: const Text(
+        'Already have an account? Log in',
+        style: TextStyle(fontSize: 17),
+      ),
     );
   }
   Widget googleButton() {

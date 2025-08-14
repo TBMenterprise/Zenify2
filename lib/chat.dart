@@ -9,7 +9,37 @@ class ChatPage extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      drawer: Drawer(
+      drawer: menu(context),
+      // Using SafeArea to avoid UI elements being obscured by system notches.
+      body: SafeArea(
+        child: Column(children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22.0,vertical:24.0),
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  const SizedBox(height: 10),
+                  toprow(context),
+                  const SizedBox(height: 112),
+                  welcomemessage(context),
+                  const SizedBox(height: 124),
+                  // Additional chat-related widgets will go here.
+                  chatContent(context),
+                ]),
+              ),
+            ),
+          ),
+          chatTextField(context),
+          if (MediaQuery.of(context).viewInsets.bottom > 0)
+            const SizedBox(height: 10),
+        ]),
+      ),
+    );
+     
+  }
+  Widget menu(BuildContext context){
+    final theme = Theme.of(context);
+    return Drawer(
         child: ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
@@ -38,17 +68,11 @@ class ChatPage extends StatelessWidget {
             // You can add other options like 'Profile', 'Settings' etc. here
           ],
         ),
-      ),
-      // Using SafeArea to avoid UI elements being obscured by system notches.
-      body: SafeArea(
-        child: Column(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22.0),
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  const SizedBox(height: 10),
-                  Row(
+      );
+  }
+  
+  Widget toprow(BuildContext context){
+    return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Use a Builder to get the correct context for Scaffold.of()
@@ -65,23 +89,24 @@ class ChatPage extends StatelessWidget {
                         },
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 112),
-                  Text(
+                  );
+    }
+    Widget welcomemessage(BuildContext context){
+      final theme = Theme.of(context);
+      return Text(
                     "What's on your mind, Benjamin?",
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 124),
-                  // Additional chat-related widgets will go here.
-                  Center(
+                  );
+      }
+    Widget chatContent(BuildContext context){
+      final theme = Theme.of(context);
+      return Center(
                     child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
-                  ),
-                ]),
-              ),
-            ),
-          ),
-          SizedBox( height: 60,
+                  ); }
+    Widget chatTextField(BuildContext context){
+      final theme = Theme.of(context);
+      return SizedBox( height: 60,
           child :TextField(
             cursorColor: theme.colorScheme.primary,
             decoration: InputDecoration(
@@ -111,9 +136,6 @@ class ChatPage extends StatelessWidget {
               ),
             ),
           ),
-          ),
-        ]),
-      ),
-    );
-  }
+          ); }
 }
+

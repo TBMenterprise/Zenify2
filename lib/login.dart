@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       // backgroundColor is inherited from theme
       body: Container(
-        margin: const EdgeInsets.only(top: 10, left: 22, right: 22),
+        margin: const EdgeInsets.only(top: 60, left: 22, right: 22),
         child: Center(
           child: SingleChildScrollView(
             child: Form(
@@ -52,13 +52,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   // Use Align to move a single widget within a larger space.
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: backbutton(),
-                  ),
-                  const SizedBox(height: 124),
                   Text('Welcome Back', style: theme.textTheme.headlineMedium),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 80),
                   googleButton(),
                   const SizedBox(height: 28),
                   _emailFormField(),
@@ -71,6 +66,9 @@ class _LoginPageState extends State<LoginPage> {
                   _loginButton(),
                   const SizedBox(height: 9),
                   _resetPassword(),
+                  const SizedBox(height: 60),
+                  donthaveanaccount(),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -80,13 +78,26 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget backbutton() {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        Navigator.pushReplacementNamed(context, '/start_page');
+   Widget donthaveanaccount () {
+    final theme = Theme.of(context);
+    return ElevatedButton(
+      onPressed: () {Navigator.pushNamed(context, '/signup');
       },
-    );
+      style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: BorderSide(color: theme.colorScheme.primary, width: 2),
+          foregroundColor: Colors.black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+      // The Row's mainAxisAlignment will handle the centering.
+      child: 
+          const Text(
+            "Create new account",
+            style: TextStyle(fontSize: 17),
+          ),
+        
+      
+  );
   }
 
    Widget googleButton() {
