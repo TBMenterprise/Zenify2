@@ -44,7 +44,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (mounted) {
         _showSnackBar('Account deleted successfully.');
         // Navigate to login or start page after deletion
-        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/start_page', (route) => false);
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {

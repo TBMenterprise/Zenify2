@@ -33,7 +33,7 @@ class StartPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 100),
                 ElevatedButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
+                  onPressed: () => Navigator.pushNamed(context, '/signup'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -45,7 +45,7 @@ class StartPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                  onPressed: () => Navigator.pushNamed(context, '/login'),
                   
                   // Style is now inherited from the theme
                   child: Text(
