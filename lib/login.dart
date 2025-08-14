@@ -23,20 +23,24 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+
+  
   void signIn() async {
     try {
       await authService.value.signIn(
         email: controllerEmail.text,
         password: controllerPassword.text,
       );
-      // Navigation is handled by AuthLayout
+      if (context.mounted) {
+        Navigator.of(context).pushReplacementNamed('/chat');
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message ?? 'An unknown error occurred.';
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -10,14 +10,29 @@ class AuthService {
 
   Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
+
+
   Future<UserCredential> signIn({
     required String email,
     required String password,
   }) async {
-    return await firebaseAuth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      return await firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        throw FirebaseAuthException(
+            code: 'wrong-password',
+            message: 'Wrong password provided for that user.');
+      }
+      rethrow;
+    }
   }
 
   Future<UserCredential> createAccount({
@@ -39,10 +54,10 @@ class AuthService {
       await firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        // Rethrow the exception to be handled in the UI
-        throw FirebaseAuthException(code: 'user-not-found');
+        throw FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'No user found for that email.');
       }
-      // Handle other potential errors or rethrow them
       rethrow;
     }
   }
