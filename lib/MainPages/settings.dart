@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'auth_services.dart';
-import 'package:mainproject/update_password.dart';
+import '../Authentication/auth_services.dart';
+import '../SubPages/update_password.dart';
 import 'dart:math';
 
 class SettingsPage extends StatefulWidget {

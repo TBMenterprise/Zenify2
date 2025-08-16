@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'auth_services.dart';
+import '../Authentication/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -69,6 +69,15 @@ class _LoginPageState extends State<LoginPage> {
               _resetPassword(),
               SizedBox(height: 16), // 16dp gap
               _loginButton(),
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               SizedBox(height: 14), // 24dp gap
               _signUpPrompt(),
               SizedBox(height:25),// tom padding
@@ -120,8 +129,28 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(28),
       ),
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement Google Sign-In
+        onPressed: () async {
+          try {
+            setState(() {
+              errorMessage = '';
+            });
+            final credential = await authService.value.signInWithGoogle();
+            if (!mounted) return;
+            final isNew = credential.additionalUserInfo?.isNewUser ?? false;
+            if (isNew) {
+              Navigator.pushReplacementNamed(context, '/user_profile_setup');
+            } else {
+              Navigator.pushReplacementNamed(context, '/chat');
+            }
+          } on FirebaseAuthException catch (e) {
+            setState(() {
+              errorMessage = e.message ?? 'An unknown error occurred.';
+            });
+          } catch (e) {
+            setState(() {
+              errorMessage = 'An unexpected error occurred: ${e.toString()}';
+            });
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -331,7 +360,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _signUpPrompt() {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to Sign Up page
+        Navigator.pushNamed(context, '/signup');
       },
       child: RichText(
         textAlign: TextAlign.center,

@@ -4,7 +4,6 @@ class StartPage extends StatelessWidget {
   const StartPage({super.key});
 
   // This widget is the root of your application.
-  // ...existing code...
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -1,15 +1,16 @@
-import 'auth_layout.dart';
+import '../Authentication/auth_layout.dart';
 import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'login.dart';
 import 'sign_up.dart';
 import 'settings.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'reset_password.dart';
+import '../SubPages/reset_password.dart';
 import 'start_page.dart';
-import 'user_profile_setup.dart'; 
-import 'delete_account.dart'; 
-import 'change_username.dart';
+import '../Authentication/user_profile_setup.dart'; 
+import '../SubPages/delete_account.dart'; 
+import '../SubPages/change_username.dart';
+import '../SubPages/update_password.dart';
 
 
 void main() async {
@@ -94,6 +95,7 @@ class MyApp extends StatelessWidget {
         '/user_profile_setup': (context) => const UserProfileSetupPage(),
         '/delete_account': (context) => const DeleteAccountPage(),
         '/change_username': (context) => const ChangeUsernamePage(),
+        '/update_password': (context) => const UpdatePasswordPage(),
       },
     );
   }

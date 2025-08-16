@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'auth_services.dart';
+import '../authentication/auth_services.dart';
 
 class ChangeUsernamePage extends StatefulWidget {
   const ChangeUsernamePage({super.key});

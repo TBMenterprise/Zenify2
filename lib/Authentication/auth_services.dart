@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 final ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
@@ -49,6 +50,25 @@ class AuthService {
 
   Future<void> signOut() async {
     await firebaseAuth.signOut();
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    if (kIsWeb) {
+      // On web, use FirebaseAuth with a popup
+      final provider = GoogleAuthProvider();
+      return await firebaseAuth.signInWithPopup(provider);
+    }
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      // User canceled the sign-in flow
+      throw FirebaseAuthException(code: 'canceled', message: 'Sign-in canceled');
+    }
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await firebaseAuth.signInWithCredential(credential);
   }
 
   Future<void> resetPassword({required String email}) async {

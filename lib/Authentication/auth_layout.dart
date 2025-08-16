@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'apploading.dart';
+import '../SubPages/apploading.dart';
 import 'auth_services.dart';
-import 'chat.dart';
-import 'start_page.dart';
+import '../MainPages/chat.dart';
+import '../MainPages/start_page.dart';
 
 class AuthLayout extends StatelessWidget {
   const AuthLayout({super.key});

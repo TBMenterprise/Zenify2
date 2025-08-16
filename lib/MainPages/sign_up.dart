@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth_services.dart';
+import '../Authentication/auth_services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 
@@ -156,8 +156,28 @@ class _SignUpPageState extends State<SignUpPage> {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement Google Sign-In
+        onPressed: () async {
+          try {
+            setState(() {
+              _errorMessage = '';
+            });
+            final credential = await authService.value.signInWithGoogle();
+            if (!mounted) return;
+            final isNew = credential.additionalUserInfo?.isNewUser ?? false;
+            if (isNew) {
+              Navigator.pushReplacementNamed(context, '/user_profile_setup');
+            } else {
+              Navigator.pushReplacementNamed(context, '/chat');
+            }
+          } on FirebaseAuthException catch (e) {
+            setState(() {
+              _errorMessage = e.message ?? 'An error occurred.';
+            });
+          } catch (e) {
+            setState(() {
+              _errorMessage = 'An unexpected error occurred: ${e.toString()}';
+            });
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
