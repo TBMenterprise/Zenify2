@@ -76,7 +76,7 @@ class AuthService {
     await _firestore.collection('users').doc(uid).set({
       'name': name,
       'age': age,
-      'email': currentUser!.email, // Assuming email is always available
+      'email': currentUser!.email,
     });
   }
 

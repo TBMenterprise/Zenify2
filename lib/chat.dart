@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'auth_services.dart';
+import 'dart:math';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -12,6 +14,40 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   _ChatPageState();
+
+  Future<DocumentSnapshot> _fetchUserDocWithBackoff() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    int attempt = 0;
+    Duration delay = const Duration(milliseconds: 500);
+    final rand = Random();
+    while (true) {
+      attempt++;
+      try {
+        return await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .get();
+      } on FirebaseException catch (e) {
+        const retryable = {
+          'unavailable',
+          'deadline-exceeded',
+          'aborted',
+          'internal',
+          'unknown',
+        };
+        if (attempt >= 5 || !retryable.contains(e.code)) {
+          rethrow;
+        }
+        final jitterMs = rand.nextInt(250);
+        await Future.delayed(delay + Duration(milliseconds: jitterMs));
+        delay = Duration(milliseconds: (delay.inMilliseconds * 2).clamp(500, 8000));
+      } catch (_) {
+        if (attempt >= 5) rethrow;
+        await Future.delayed(delay);
+        delay = Duration(milliseconds: (delay.inMilliseconds * 2).clamp(500, 8000));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,33 +85,245 @@ class _ChatPageState extends State<ChatPage> {
   Widget menu(BuildContext context){
     final theme = Theme.of(context);
     return Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration:
-                  BoxDecoration(color: theme.colorScheme.primary),
-              child: Text(
-                'ZeniFY Menu',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 24,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(right: Radius.circular(24)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.surface,
+                theme.colorScheme.surface.withValues(alpha: 0.98),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withValues(alpha: 0.7),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'ZeniFY Menu',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 26,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withValues(alpha: 0.25),
+                              blurRadius: 12,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Elevate your day',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.logout, color: Colors.black),
-              title: Text('Logout', style: theme.textTheme.bodyMedium),
-              onTap: () {
-                authService.value.signOut();
-                // To log out, we navigate back to the StartPage and remove all previous routes.
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/start_page', (Route<dynamic> route) => false);
-              },
-            ),
-            // You can add other options like 'Profile', 'Settings' etc. here
-          ],
+              // GoFundMe button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final url = Uri.parse('https://www.gofundme.com/your-campaign');
+                    final messenger = ScaffoldMessenger.of(context);
+                    final can = await canLaunchUrl(url);
+                    if (!can) {
+                      messenger.showSnackBar(
+                        const SnackBar(content: Text('Could not open GoFundMe')),
+                      );
+                      return;
+                    }
+                    final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+                    if (!launched) {
+                      messenger.showSnackBar(
+                        const SnackBar(content: Text('Could not open GoFundMe')),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.favorite, color: Colors.white),
+                  label: const Text(
+                    'Support us on GoFundMe',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00C853), // Futuristic green
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Upcoming Features section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Card(
+                  elevation: 0,
+                  color: theme.colorScheme.surface.withValues(alpha: 0.7),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      leading: Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
+                      title: const Text(
+                        'Upcoming Features',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Color(0xFF2D2D2D),
+                        ),
+                      ),
+                      childrenPadding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.smart_toy_outlined, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'AI Coach',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Personal guidance 24/7'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.bar_chart_rounded, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'Deep Analytics',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Insights & trends'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.groups_2_outlined, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'Community Challenges',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Grow with others'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.black),
+                title: const Text(
+                   'Logout',
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeue',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: Color(0xFF2D2D2D),
+                  ),
+                ),
+                onTap: () {
+                  _showLogoutConfirmationDialog(context);
+                },
+              ),
+            ],
+          ),
         ),
       );
   }
@@ -103,31 +351,71 @@ class _ChatPageState extends State<ChatPage> {
     Widget welcomemessage(BuildContext context){
       final theme = Theme.of(context);
       return FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .get(),
+        future: _fetchUserDocWithBackoff(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'We\'re having trouble loading your profile right now.',
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeue',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    color: Color(0xFF2D2D2D),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  onPressed: () {
+                    setState(() {}); // triggers a new future
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+                    foregroundColor: theme.colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    minimumSize: const Size(120, 36),
+                  ),
+                  child: const Text('Retry'),
+                ),
+              ],
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.data() == null) {
+            return const Text('Welcome back!');
           }
           final userData = snapshot.data!.data() as Map<String, dynamic>;
           final String userName = userData['name'] ?? 'User';
-          return Text(
-            'Welcome, $userName!',
+           return Text(
+            'Welcome back, $userName!',
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineMedium,
+            style: const TextStyle(
+              fontFamily: 'HelveticaNeue',
+              fontWeight: FontWeight.w700,
+              fontSize: 28,
+              color: Color(0xFF212121),
+            ),
           );
         },
       );
     }
     Widget chatContent(BuildContext context){
-      final theme = Theme.of(context);
       return Center(
-                    child: Text('Chat content will appear here.', style: theme.textTheme.bodyMedium),
+                    child: const Text(
+                      'Chat content will appear here.',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeue',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        color: Color(0xFF2D2D2D),
+                      ),
+                    ),
                   ); }
     Widget chatTextField(BuildContext context){
       final theme = Theme.of(context);
@@ -163,4 +451,87 @@ class _ChatPageState extends State<ChatPage> {
           ),
           ); }
 }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Confirm Logout',
+            style: TextStyle(
+              fontFamily: 'HelveticaNeue',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF212121),
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to log out?',
+            style: TextStyle(
+              fontFamily: 'HelveticaNeue',
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF757575),
+            ),
+          ),
+          actions: <Widget>[
+            OutlinedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+                foregroundColor: theme.colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                minimumSize: const Size(120, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                authService.value.signOut();
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/start_page', (Route<dynamic> route) => false);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                minimumSize: const Size(140, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Log Out',
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 

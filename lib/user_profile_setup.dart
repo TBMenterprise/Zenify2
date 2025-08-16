@@ -17,7 +17,6 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
   @override
   void dispose() {
     _nameController.dispose();
-  
     super.dispose();
   }
 
@@ -31,23 +30,22 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
         }
         return;
       }
-      
+
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await authService.value.saveUserProfile(
           uid: user.uid,
           name: _nameController.text,
-          age: _selectedAge!, // Use _selectedAge directly
+          age: _selectedAge!,
         );
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(
-            context, 
+            context,
             '/chat',
             (route) => false,
           );
         }
       } else {
-        // Handle case where user is not logged in (shouldn't happen after signup)
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('User not logged in.')),
@@ -59,78 +57,191 @@ class _UserProfileSetupPageState extends State<UserProfileSetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Complete Your Profile'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(22.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Tell us a bit about yourself',
-                  style: theme.textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 50),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: _selectedAge,
-                  decoration: const InputDecoration(
-                    labelText: 'Age',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: List.generate(100, (index) => index + 1)
-                      .map((age) => DropdownMenuItem(
-                            value: age,
-                            child: Text('$age'),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedAge = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please select your age';
-                    }
-                    if (value < 18) {
-                      return 'You must be at least 18 years old';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: _saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    textStyle: const TextStyle(fontSize: 18),
-                  ),
-                  child: const Text('Save Profile'),
-                ),
-              ],
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  _backArrow(),
+                  const SizedBox(height: 20),
+                  _titleText(),
+                  const SizedBox(height: 12),
+                  _subtitleText(),
+                  const SizedBox(height: 32),
+                  _nameField(),
+                  const SizedBox(height: 16),
+                  _ageField(),
+                  const SizedBox(height: 32),
+                  _saveButton(),
+                ],
+              ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _backArrow() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Container(
+          width: 48,
+          height: 48,
+          alignment: Alignment.center,
+          child: const Icon(
+            Icons.arrow_back_ios,
+            size: 24,
+            color: Color(0xFF2D2D2D),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _titleText() {
+    return Center(
+      child: Text(
+        'Complete Your Profile',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontFamily: 'HelveticaNeue',
+          fontWeight: FontWeight.w700,
+          fontSize: 30,
+          height: 1.2,
+          letterSpacing: -0.2,
+          color: Color(0xFF3A3A3C),
+        ),
+      ),
+    );
+  }
+
+  Widget _subtitleText() {
+    return Center(
+      child: Text(
+        'Tell us a bit about yourself',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontFamily: 'HelveticaNeue',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Color(0xFF9E9E9E),
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+
+  Widget _nameField() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: TextFormField(
+        controller: _nameController,
+        cursorColor: const Color(0xFF2D2D2D),
+        style: const TextStyle(
+          fontFamily: 'HelveticaNeue',
+          fontSize: 16,
+          color: Color(0xFF2D2D2D),
+        ),
+        decoration: InputDecoration(
+          hintText: 'Full Name',
+          hintStyle: const TextStyle(
+            fontFamily: 'HelveticaNeue',
+            fontSize: 16,
+            color: Color(0xFF9E9E9E),
+          ),
+          filled: true,
+          fillColor: const Color(0xFFF5F5F5),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your name';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _ageField() {
+    return DropdownButtonFormField<int>(
+      value: _selectedAge,
+      items: List.generate(100, (index) => index + 1)
+          .map((age) => DropdownMenuItem(value: age, child: Text('$age')))
+          .toList(),
+      onChanged: (value) => setState(() => _selectedAge = value),
+      decoration: InputDecoration(
+        hintText: 'Age',
+        hintStyle: const TextStyle(
+          fontFamily: 'HelveticaNeue',
+          fontSize: 16,
+          color: Color(0xFF9E9E9E),
+        ),
+        filled: true,
+        fillColor: const Color(0xFFF5F5F5),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      ),
+      style: const TextStyle(
+        fontFamily: 'HelveticaNeue',
+        fontSize: 16,
+        color: Color(0xFF2D2D2D),
+      ),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select your age';
+        }
+        if (value < 18) {
+          return 'You must be at least 18 years old';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _saveButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: ElevatedButton(
+        onPressed: _saveProfile,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 64, 137, 226),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          minimumSize: const Size(double.infinity, 56),
+          elevation: 0,
+        ),
+        child: const Text(
+          'SAVE AND CONTINUE',
+          style: TextStyle(
+            fontFamily: 'HelveticaNeue',
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+            letterSpacing: 1.25,
           ),
         ),
       ),

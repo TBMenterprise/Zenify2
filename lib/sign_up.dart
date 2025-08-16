@@ -5,7 +5,6 @@ import 'auth_services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 
-
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -39,7 +38,8 @@ class _SignUpPageState extends State<SignUpPage> {
         if (mounted) {
           // Navigation is handled by AuthLayout listening to auth state changes.
           Navigator.pushReplacementNamed(context, '/user_profile_setup');
-      }} on FirebaseAuthException catch (e) {
+        }
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _errorMessage = e.message ?? 'An error occurred.';
         });
@@ -47,93 +47,149 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // Using Theme.of(context) inline in widgets where needed; no local variable to avoid unused warnings
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      // backgroundColor is now inherited from the theme's colorScheme.background
-      body: Container(
-          margin: const EdgeInsets.only(top:60, left: 22, right: 22,),
-          child: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-              children: [
-              Text(
-              'Create your account',
-              style: theme.textTheme.headlineMedium,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              right: 0,
+              child: SvgPicture.asset(
+                'assets/background.svg', // Assuming this is your pattern SVG
+                width: 150,
+                height: 150,
+              ),
             ),
-              
-            const SizedBox(
-                height: 80,
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: SvgPicture.asset(
+                'assets/background.svg', // Assuming this is your pattern SVG
+                width: 150,
+                height: 150,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16.0), // 16dp from SafeArea top
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFF2D2D2D), width: 1),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFF2D2D2D),
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      Center(
+                        child: Text(
+                          'Create your account',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'HelveticaNeue',
+                            fontSize: 30,
+                            fontWeight: FontWeight.w700,
+                            height: 1.2,
+                            letterSpacing: -0.2,
+                            color: Color(0xFF3A3A3C),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32.0),
+                      googleButton(),
+                      const SizedBox(height: 32.0),
+                      Center(
+                        child: Text(
+                          'OR LOG IN WITH EMAIL',
+                          style: TextStyle(
+                            fontFamily: 'HelveticaNeue',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5,
+                            color: Color(0xFF9E9E9E),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24.0),
+                      enteremail(),
+                      const SizedBox(height: 16.0),
+                      enterpassword(),
+                      const SizedBox(height: 12.0),
+                      readPrivacypol(),
+                      const SizedBox(height: 24.0),
+                      signupbutton(),
+                      if (_errorMessage.isNotEmpty) erroRmessage(),
+                    ],
+                  ),
                 ),
-            googleButton(),
-            const SizedBox(
-              height: 28,
+              ),
             ),
-            enteremail(),
-            const SizedBox(
-              height: 20,
-            ),
-            enterpassword(),
-            const SizedBox(
-              height: 28,
-            ),
-            signupbutton(),
-            if (_errorMessage.isNotEmpty)
-               erroRmessage(),
-            const SizedBox(height: 8),
-            readPrivacypol(),
-            const SizedBox(height: 60),
-
-              ],
-           ),
-          ),
-         ),
+          ],
         ),
       ),
     );
-  } 
+  }
 
   Widget googleButton() {
-    final theme = Theme.of(context);
-    return ElevatedButton(
-      onPressed: () {
-        // TODO: Implement Google Sign-In
-      },
-      style: ElevatedButton.styleFrom(
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: () {
+          // TODO: Implement Google Sign-In
+        },
+        style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          side: BorderSide(color: theme.colorScheme.primary, width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+            side: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+          ),
+          elevation: 0,
           foregroundColor: Colors.black,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-      // The Row's mainAxisAlignment will handle the centering.
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            'assets/bluegoogleicon.svg',
-            height: 22.0,
-          ),
-          const SizedBox(width: 12.0),
-          const Text(
-            'Continue with Google',
-            style: TextStyle(fontSize: 17),
-          ),
-        ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/bluegoogleicon.svg',
+              height: 24.0,
+            ),
+            const SizedBox(width: 16.0),
+            const Text(
+              'CONTINUE WITH GOOGLE',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeue',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.25,
+                color: Color.fromARGB(255, 83, 79, 77),
+              ),
+            ),
+          ],
+        ),
       ),
-  );
+    );
   }
   Widget enteremail(){
     final theme = Theme.of(context);
@@ -141,10 +197,14 @@ class _SignUpPageState extends State<SignUpPage> {
     TextFormField(
               controller: _emailController,
               maxLength: 128,
-              buildCounter: (BuildContext context, { int? currentLength, bool? isFocused, int? maxLength }) => null,
+              buildCounter: (BuildContext context, { required int currentLength, required bool isFocused, required int? maxLength }) => null,
               cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
                 hintText: 'Email Address',
+                hintStyle: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                ),
+
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -162,11 +222,15 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
               controller: _passwordController,
               maxLength: 128,
-              buildCounter: (BuildContext context, { int? currentLength, bool? isFocused, int? maxLength }) => null,
+              buildCounter: (BuildContext context, { required int currentLength, required bool isFocused, required int? maxLength }) => null,
               obscureText: true,
               cursorColor: theme.colorScheme.primary,
               decoration: InputDecoration(
                 hintText: 'Password',
+                hintStyle: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                ),
+
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -177,16 +241,22 @@ class _SignUpPageState extends State<SignUpPage> {
             );
   }
   Widget signupbutton(){
-    final theme = Theme.of(context);
+    // No need for a local theme variable here
     return ElevatedButton(
               onPressed: _signUp,
               // Style is now inherited from the theme
-              child: Text(
-                'Sign Up',
-                style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
+              child: const Text(
+                'GET STARTED',
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: Colors.white,
+                ),
               ),
             );
-          
+            
   }
   Widget erroRmessage(){ 
     return
@@ -206,12 +276,19 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 RichText(
                   text: TextSpan(
-                    style: theme.textTheme.bodyMedium,
+                    style: const TextStyle(
+                      fontFamily: 'HelveticaNeue',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF9E9E9E),
+                    ),
                     children: <TextSpan>[
                       const TextSpan(text: 'I have read the '),
                       TextSpan(
                         text: 'Privacy Policy',
                         style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w400,
                           color: theme.colorScheme.primary,
                         ),
                       ),
