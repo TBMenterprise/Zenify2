@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Authentication/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,8 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   String errorMessage = '';
   bool _isPasswordVisible = false;
-  List<String> _recentEmails = [];
-  bool _showEmailOptions = false;
 
   @override
   void dispose() {
@@ -27,37 +24,12 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRecentEmails();
-  }
-
-  Future<void> _loadRecentEmails() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _recentEmails = prefs.getStringList('recent_emails') ?? [];
-    });
-  }
-
-  Future<void> _saveRecentEmail(String email) async {
-    if (email.isEmpty) return;
-    final prefs = await SharedPreferences.getInstance();
-    final list = prefs.getStringList('recent_emails') ?? [];
-    list.remove(email);
-    list.insert(0, email);
-    if (list.length > 5) list.removeLast();
-    await prefs.setStringList('recent_emails', list);
-    setState(() => _recentEmails = list);
-  }
-
   Future<void> signIn() async {
     try {
       await authService.value.signIn(
         email: controllerEmail.text,
         password: controllerPassword.text,
       );
-  await _saveRecentEmail(controllerEmail.text.trim());
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/chat');
     } on FirebaseAuthException catch (e) {
@@ -73,67 +45,45 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            // Close email dropdown if open and tap outside
-            if (_showEmailOptions) {
-              setState(() {
-                _showEmailOptions = false;
-              });
-            }
-            FocusScope.of(context).unfocus();
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 16), // 16dp below SafeArea
-                    _backArrow(),
-                    SizedBox(height: 20), // 20dp gap
-                    _titleText(),
-                    SizedBox(height: 32), // 32dp gap
-                    _googleButton(),
-                    SizedBox(height: 32), // 32dp gap
-                    _dividerText(),
-                    SizedBox(height: 24), // 24dp gap
-                    Stack(
-                      children: [
-                        Column(
-                          children: [
-                            _emailFormField(),
-                            // show recent email options (widget returns empty box when not active)
-                            _emailOptions(),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16), // 16dp gap
-                    _passwordFormField(),
-                    SizedBox(height: 8), // 8dp gap
-                    _resetPassword(),
-                    SizedBox(height: 16), // 16dp gap
-                    _loginButton(),
-                    if (errorMessage.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          errorMessage,
-                          style: TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    SizedBox(height: 14), // 24dp gap
-                    _signUpPrompt(),
-                    SizedBox(height:25),// tom padding
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 16), // 16dp below SafeArea
+              _backArrow(),
+              SizedBox(height: 20), // 20dp gap
+              _titleText(),
+              SizedBox(height: 32), // 32dp gap
+              _googleButton(),
+              SizedBox(height: 32), // 32dp gap
+              _dividerText(),
+              SizedBox(height: 24), // 24dp gap
+              _emailFormField(),
+              SizedBox(height: 16), // 16dp gap
+              _passwordFormField(),
+              SizedBox(height: 8), // 8dp gap
+              _resetPassword(),
+              SizedBox(height: 16), // 16dp gap
+              _loginButton(),
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
+              SizedBox(height: 14), // 24dp gap
+              _signUpPrompt(),
+              SizedBox(height:25),// tom padding
+            ],
             ),
+          ),
           ),
         ),
       ),
@@ -186,13 +136,11 @@ class _LoginPageState extends State<LoginPage> {
             });
             final credential = await authService.value.signInWithGoogle(context);
             if (!mounted) return;
-            if (credential != null) {
-              final isNew = credential.additionalUserInfo?.isNewUser ?? false;
-              if (isNew) {
-                Navigator.pushReplacementNamed(context, '/user_profile_setup');
-              } else {
-                Navigator.pushReplacementNamed(context, '/chat');
-              }
+            final isNew = credential?.additionalUserInfo?.isNewUser ?? false;
+            if (isNew) {
+              Navigator.pushReplacementNamed(context, '/user_profile_setup');
+            } else {
+              Navigator.pushReplacementNamed(context, '/chat');
             }
           } on FirebaseAuthException catch (e) {
             setState(() {
@@ -258,11 +206,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: TextFormField(
         controller: controllerEmail,
-        onTap: () {
-          setState(() {
-            _showEmailOptions = true;
-          });
-        },
         cursorColor: Color(0xFF2D2D2D),
         style: TextStyle(
           fontFamily: 'HelveticaNeue',
@@ -290,56 +233,6 @@ class _LoginPageState extends State<LoginPage> {
           }
           return null;
         },
-      ),
-    );
-  }
-
-  Widget _emailOptions() {
-    if (!_showEmailOptions || _recentEmails.isEmpty) return const SizedBox.shrink();
-    return Container(
-      margin: const EdgeInsets.only(top: 4, left: 6, right: 6),
-      padding: const EdgeInsets.only(bottom: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(Icons.close, size: 20, color: Colors.grey),
-                onPressed: () {
-                  setState(() {
-                    _showEmailOptions = false;
-                  });
-                },
-                tooltip: 'Close',
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-              ),
-            ],
-          ),
-          ..._recentEmails.map((e) => ListTile(
-            title: Text(e),
-            onTap: () {
-              setState(() {
-                controllerEmail.text = e;
-                _showEmailOptions = false;
-              });
-            },
-          )),
-        ],
       ),
     );
   }
@@ -398,13 +291,13 @@ class _LoginPageState extends State<LoginPage> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.only(left: 18.0), // 24dp + 18dp = 42dp from screen edge
+        padding: const EdgeInsets.only(left: 8.0, top: 4.0),
         child: SizedBox(
-          height: 40,
+          height: 32,
           child: TextButton(
             style: ButtonStyle(
               padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-              minimumSize: WidgetStateProperty.all(const Size(0, 40)),
+              minimumSize: WidgetStateProperty.all(const Size(0, 32)),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
 
               foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {

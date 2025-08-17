@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Authentication/auth_services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SignUpPage extends StatefulWidget {
@@ -19,11 +18,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isChecked = false;
   String _errorMessage = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _signUp() async {
     if (_formKey.currentState!.validate()) {
@@ -41,28 +35,13 @@ class _SignUpPageState extends State<SignUpPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        // Save email to recent list
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          final list = prefs.getStringList('recent_emails') ?? [];
-          list.remove(_emailController.text);
-          list.insert(0, _emailController.text);
-          if (list.length > 5) list.removeLast();
-          await prefs.setStringList('recent_emails', list);
-        } catch (_) {}
         if (mounted) {
           // Navigation is handled by AuthLayout listening to auth state changes.
           Navigator.pushReplacementNamed(context, '/user_profile_setup');
         }
       } on FirebaseAuthException catch (e) {
         setState(() {
-          if (e.code == 'email-already-in-use') {
-            _errorMessage = 'This email is already registered. Try logging in or use a different email.';
-          } else if (e.code == 'weak-password') {
-            _errorMessage = 'The password is too weak. Use a stronger password.';
-          } else {
-            _errorMessage = e.message ?? 'An error occurred.';
-          }
+          _errorMessage = e.message ?? 'An error occurred.';
         });
       }
     }
@@ -184,13 +163,11 @@ class _SignUpPageState extends State<SignUpPage> {
             });
             final credential = await authService.value.signInWithGoogle(context);
             if (!mounted) return;
-            if (credential != null) {
-              final isNew = credential.additionalUserInfo?.isNewUser ?? false;
-              if (isNew) {
-                Navigator.pushReplacementNamed(context, '/user_profile_setup');
-              } else {
-                Navigator.pushReplacementNamed(context, '/chat');
-              }
+            final isNew = credential?.additionalUserInfo?.isNewUser ?? false;
+            if (isNew) {
+              Navigator.pushReplacementNamed(context, '/user_profile_setup');
+            } else {
+              Navigator.pushReplacementNamed(context, '/chat');
             }
           } on FirebaseAuthException catch (e) {
             setState(() {

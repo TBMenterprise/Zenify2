@@ -3,23 +3,58 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'account_chooser_dialog.dart';
 
 final ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
+/// Service class that handles all authentication-related operations.
+/// 
+/// This service provides methods for:
+/// - Email/password authentication
+/// - Google Sign-In
+/// - Account management
+/// - User profile operations
+/// 
+/// The service is implemented as a singleton and can be accessed through
+/// the global [authService] ValueNotifier.
 class AuthService {
+  /// Firebase Firestore instance for user data storage
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  /// Firebase Authentication instance for auth operations
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  
+  /// Google Sign-In instance configured for email scope
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email'],
     signInOption: SignInOption.standard,
   );
 
+  /// Returns the currently signed-in user or null if no user is signed in
   User? get currentUser => firebaseAuth.currentUser;
+  
+  /// Stream of authentication state changes.
+  /// 
+  /// Listen to this stream to be notified when:
+  /// - User signs in
+  /// - User signs out
+  /// - Token refresh occurs
   Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
 
 
+  /// Signs in a user using email and password authentication.
+  /// 
+  /// Parameters:
+  /// - [email] The user's email address
+  /// - [password] The user's password
+  /// 
+  /// Returns:
+  /// - [UserCredential] containing the user's authentication information
+  /// 
+  /// Throws:
+  /// - FirebaseAuthException with code 'user-not-found' if email doesn't exist
+  /// - FirebaseAuthException with code 'wrong-password' for incorrect password
+  /// - Other FirebaseAuthException types for various authentication errors
   Future<UserCredential> signIn({
     required String email,
     required String password,
@@ -64,46 +99,23 @@ class AuthService {
       return await firebaseAuth.signInWithPopup(provider);
     }
 
-    // Try to get currently signed in account
-    GoogleSignInAccount? currentAccount = await _googleSignIn.signInSilently();
-    
-    // If we have a signed in account, show the chooser
-    if (currentAccount != null) {
-      // Show account chooser dialog
-      final bool useExisting = await showDialog<bool>(
-        context: context,
-        builder: (context) => AccountChooserDialog(
-          account: currentAccount,
-          onAccountSelected: () => Navigator.of(context).pop(true),
-          onNewAccount: () async {
-            await _googleSignIn.signOut(); // Sign out to force new account selection
-            Navigator.of(context).pop(false); // Close dialog, trigger new sign in
-          },
-        ),
-      ) ?? false;
-
-      if (useExisting) {
-        // User wants to use existing account
-        final GoogleSignInAuthentication googleAuth = await currentAccount.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        return await firebaseAuth.signInWithCredential(credential);
-      }
-    }
-
-    // No accounts or user wants new account
+    // Sign out first to always show account picker
+    await _googleSignIn.signOut();
+      
+    // Show Google account picker
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       throw FirebaseAuthException(code: 'canceled', message: 'Sign-in canceled');
     }
 
+    // Get auth tokens
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
+
+    // Sign in with Firebase
     return await firebaseAuth.signInWithCredential(credential);
   }
 
