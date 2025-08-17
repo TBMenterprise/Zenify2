@@ -13,7 +13,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   void _signOutAndNavigate(BuildContext context) async {
     try {
       await AuthService().signOut();
@@ -62,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: <Widget>[
             OutlinedButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss dialog
+                Navigator.of(dialogContext).pop();
               },
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
@@ -84,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss dialog
+                Navigator.of(dialogContext).pop();
                 _signOutAndNavigate(context);
               },
               style: ElevatedButton.styleFrom(
@@ -149,6 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2D2D2D)),
@@ -172,161 +172,178 @@ class _SettingsPageState extends State<SettingsPage> {
         elevation: 0,
         shadowColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 20.0),
-        child: ListView(
-          children: [
-            FutureBuilder<DocumentSnapshot>(
-              future: _fetchProfileWithBackoff(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  final theme = Theme.of(context);
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "We couldn't load your profile right now.",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                          color: Color(0xFF2D2D2D),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+          return Future.delayed(const Duration(milliseconds: 100));
+        },
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 20.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  // Profile Card
+                  FutureBuilder<DocumentSnapshot>(
+                    future: _fetchProfileWithBackoff(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        final theme = Theme.of(context);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "We couldn't load your profile right now.",
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                color: Color(0xFF2D2D2D),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            OutlinedButton(
+                              onPressed: () {
+                                setState(() {});
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: theme.colorScheme.primary, width: 1.5),
+                                foregroundColor: theme.colorScheme.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                minimumSize: const Size(120, 36),
+                              ),
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        );
+                      }
+                      final userData =
+                          snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                      return Card(
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton(
-                        onPressed: () {
-                          setState(() {});
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
-                          foregroundColor: theme.colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 24.0, horizontal: 22.0),
+                          child: Column(
+                            children: [
+                              const CircleAvatar(
+                                radius: 28,
+                                backgroundImage:
+                                    AssetImage('assets/signInImage.png'),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                userData['name'] ?? 'No name',
+                                style: const TextStyle(
+                                  fontFamily: 'HelveticaNeue',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20,
+                                  color: Color(0xFF2D2D2D),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                userData['email'] ?? 'No email',
+                                style: const TextStyle(
+                                  fontFamily: 'HelveticaNeue',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: Color(0xFF6D6D6D),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Age: ${userData['age'] ?? 'Not specified'}',
+                                style: const TextStyle(
+                                  fontFamily: 'HelveticaNeue',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: Color(0xFF6D6D6D),
+                                ),
+                              ),
+                            ],
                           ),
-                          minimumSize: const Size(120, 36),
                         ),
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  );
-                }
-                final userData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
-                return Card(
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                      );
+                    },
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 24.0, horizontal: 22.0),
-                    child: Column(
+                  const SizedBox(height: 25),
+                  // List Tiles
+                  ...[
+                    {'title': 'Update Username'},
+                    {'title': 'Change Password'},
+                    {'title': 'Support Us'},
+                    {'title': 'Help & Support'},
+                    {'title': 'Delete Account'},
+                  ].map(
+                    (item) => Column(
                       children: [
-                        const CircleAvatar(
-                          radius: 28,
-                          backgroundImage:
-                              AssetImage('assets/signInImage.png'),
+                        ListTile(
+                          title: Text(
+                            item['title']!,
+                            style: const TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Color(0xFF2D2D2D),
+                            ),
+                          ),
+                          trailing: const Icon(Icons.chevron_right,
+                              color: Color(0xFF9E9E9E)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          tileColor: Colors.white,
+                          onTap: () {
+                            if (item['title'] == 'Change Password') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const UpdatePasswordPage(),
+                                ),
+                              );
+                            } else if (item['title'] == 'Delete Account') {
+                              Navigator.pushNamed(context, '/delete_account');
+                            } else if (item['title'] == 'Update Username') {
+                              Navigator.pushNamed(context, '/change_username');
+                            }
+                          },
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          userData['name'] ?? 'No name',
-                          style: const TextStyle(
-                            fontFamily: 'HelveticaNeue',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                            color: Color(0xFF2D2D2D),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          userData['email'] ?? 'No email',
-                          style: const TextStyle(
-                            fontFamily: 'HelveticaNeue',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Color(0xFF6D6D6D),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Age: ${userData['age'] ?? 'Not specified'}',
-                           style: const TextStyle(
-                            fontFamily: 'HelveticaNeue',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: Color(0xFF6D6D6D),
-                          ),
-                        ),
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-            SizedBox(height: 25),
-            ...[
-              {'title': 'Update Username'},
-              {'title': 'Change Password'},
-              {'title': 'Support Us'},
-              {'title': 'Help & Support'},
-              {'title': 'Delete Account'},
-            ].map(
-              (item) => Column(
-                children: [
+                  const SizedBox(height: 20),
+                  // Log Out Button
                   ListTile(
-                    title: Text(
-                      item['title']!,
-                      style: const TextStyle(
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                        color: Color(0xFF2D2D2D),
+                    title: Center(
+                      child: TextButton(
+                        onPressed: () {
+                          _showLogoutConfirmationDialog(context);
+                        },
+                        child: const Text(
+                          'Log Out',
+                          style: TextStyle(
+                            fontFamily: 'HelveticaNeue',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.red,
+                          ),
+                        ),
                       ),
                     ),
-                    trailing: const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    tileColor: Colors.white,
-                    onTap: () {
-                      if (item['title'] == 'Change Password') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const UpdatePasswordPage(),
-                          ),
-                        );
-                      } else if (item['title'] == 'Delete Account') {
-                        Navigator.pushNamed(context, '/delete_account');
-                      } else if (item['title'] == 'Update Username') {
-                        Navigator.pushNamed(context, '/change_username');
-                      }
-                    },
                   ),
-                  SizedBox(height: 12),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              title: Center(
-                child: TextButton(
-                  onPressed: () {
-                    _showLogoutConfirmationDialog(context);
-                  },
-                  child: Text(
-                    'Log Out',
-                    style: const TextStyle(
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: Colors.red,
-                    ),
-                  ),
-                ),
+                ]),
               ),
             ),
           ],
