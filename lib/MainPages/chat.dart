@@ -51,10 +51,42 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      drawer: menu(context),
+  return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Color(0xFF2D2D2D)),
+            onPressed: () {
+              final RenderBox button = context.findRenderObject() as RenderBox;
+              final Offset topLeft = button.localToGlobal(Offset.zero);
+              final Size size = button.size;
+              _showMainMenu(context, topLeft, size);
+            },
+          ),
+        ),
+        title: const Text(
+          'Chat',
+          style: TextStyle(
+            fontFamily: 'HelveticaNeue',
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+            color: Color(0xFF3A3A3C),
+            height: 1.2,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Color(0xFF2D2D2D)),
+            onPressed: () => Navigator.pushNamed(context, '/settings'),
+          ),
+        ],
+      ),
       // Using SafeArea to avoid UI elements being obscured by system notches.
       body: SafeArea(
         child: Column(children: [
@@ -63,8 +95,7 @@ class _ChatPageState extends State<ChatPage> {
               padding: const EdgeInsets.symmetric(horizontal: 22.0,vertical:24.0),
               child: SingleChildScrollView(
                 child: Column(children: [
-                  const SizedBox(height: 10),
-                  toprow(context),
+                  const SizedBox(height: 6),
                   const SizedBox(height: 112),
                   welcomemessage(context),
                   const SizedBox(height: 124),
@@ -82,263 +113,25 @@ class _ChatPageState extends State<ChatPage> {
     );
      
   }
-  Widget menu(BuildContext context){
-    final theme = Theme.of(context);
-    return Drawer(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.horizontal(right: Radius.circular(24)),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                theme.colorScheme.surface,
-                theme.colorScheme.surface.withValues(alpha: 0.98),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      theme.colorScheme.primary,
-                      theme.colorScheme.primary.withValues(alpha: 0.7),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'ZeniFY Menu',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 26,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withValues(alpha: 0.25),
-                              blurRadius: 12,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Elevate your day',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // GoFundMe button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    final url = Uri.parse('https://www.gofundme.com/your-campaign');
-                    final messenger = ScaffoldMessenger.of(context);
-                    final can = await canLaunchUrl(url);
-                    if (!can) {
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Could not open GoFundMe')),
-                      );
-                      return;
-                    }
-                    final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
-                    if (!launched) {
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Could not open GoFundMe')),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.favorite, color: Colors.white),
-                  label: const Text(
-                    'Support us on GoFundMe',
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00C853), // Futuristic green
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Upcoming Features section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Card(
-                  elevation: 0,
-                  color: theme.colorScheme.surface.withValues(alpha: 0.7),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      leading: Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
-                      title: const Text(
-                        'Upcoming Features',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Color(0xFF2D2D2D),
-                        ),
-                      ),
-                      childrenPadding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.smart_toy_outlined, color: theme.colorScheme.primary),
-                          title: const Text(
-                            'AI Coach',
-                            style: TextStyle(
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          subtitle: const Text('Personal guidance 24/7'),
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'SOON',
-                              style: TextStyle(
-                                fontFamily: 'HelveticaNeue',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.bar_chart_rounded, color: theme.colorScheme.primary),
-                          title: const Text(
-                            'Deep Analytics',
-                            style: TextStyle(
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          subtitle: const Text('Insights & trends'),
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'SOON',
-                              style: TextStyle(
-                                fontFamily: 'HelveticaNeue',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.groups_2_outlined, color: theme.colorScheme.primary),
-                          title: const Text(
-                            'Community Challenges',
-                            style: TextStyle(
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          subtitle: const Text('Grow with others'),
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'SOON',
-                              style: TextStyle(
-                                fontFamily: 'HelveticaNeue',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.black),
-                title: const Text(
-                   'Logout',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                    color: Color(0xFF2D2D2D),
-                  ),
-                ),
-                onTap: () {
-                  _showLogoutConfirmationDialog(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-  }
+  
   
   Widget toprow(BuildContext context){
     return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Use a Builder to get the correct context for Scaffold.of()
+                      // Menu icon now anchors the dropdown menu (replaces drawer)
                       Builder(
                         builder: (context) => IconButton(
                           icon: const Icon(Icons.menu, color: Colors.black),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
+                          onPressed: () {
+                            final RenderBox button = context.findRenderObject() as RenderBox;
+                            final Offset topLeft = button.localToGlobal(Offset.zero);
+                            final Size size = button.size;
+                            _showMainMenu(context, topLeft, size);
+                          },
                         ),
                       ),
+                      // Settings button restored to original behavior
                       IconButton(
                         icon: const Icon(Icons.settings, color: Colors.black),
                         onPressed: () {
@@ -348,6 +141,296 @@ class _ChatPageState extends State<ChatPage> {
                     ],
                   );
     }
+
+  // Shows the main dropdown menu anchored to the provided position/size.
+  void _showMainMenu(BuildContext context, Offset anchor, Size anchorSize) async {
+    final RelativeRect position = RelativeRect.fromLTRB(
+      anchor.dx,
+      anchor.dy + anchorSize.height,
+      anchor.dx + anchorSize.width,
+      anchor.dy,
+    );
+
+    await showMenu<int>(
+      context: context,
+      position: position,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFEAEAEA), width: 1),
+      ),
+      elevation: 4,
+      items: [
+        PopupMenuItem<int>(
+          value: 1,
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 240,
+            height: 48,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+                // Assumption: route name for conversations
+                Navigator.pushNamed(context, '/conversations');
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(
+                  children: const [
+                    Icon(Icons.history, color: Colors.black),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Conversations',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: Color(0xFF2D2D2D),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 2,
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 240,
+            height: 48,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+                // open the secondary menu anchored slightly below
+                _showSecondaryMenu(context, anchor + Offset(0, anchorSize.height + 8), anchorSize);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(
+                  children: const [
+                    Icon(Icons.more_horiz, color: Colors.black),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'More',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: Color(0xFF2D2D2D),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 3,
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 240,
+            height: 48,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+                _showLogoutConfirmationDialog(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(
+                  children: const [
+                    Icon(Icons.logout, color: Colors.black),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: Color(0xFFD32F2F), // red for logout text
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+    // selected unused but kept for future use
+  }
+
+  // Secondary menu shown when "More" is tapped
+  void _showSecondaryMenu(BuildContext context, Offset anchor, Size anchorSize) async {
+    final RelativeRect position = RelativeRect.fromLTRB(
+      anchor.dx,
+      anchor.dy,
+      anchor.dx + anchorSize.width,
+      anchor.dy,
+    );
+
+    await showMenu<int>(
+      context: context,
+      position: position,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFEAEAEA), width: 1),
+      ),
+      elevation: 4,
+      items: [
+        PopupMenuItem<int>(
+          value: 1,
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 240,
+            height: 48,
+            child: InkWell(
+              onTap: () async {
+                Navigator.of(context).pop();
+                final url = Uri.parse('https://www.gofundme.com/your-campaign');
+                final messenger = ScaffoldMessenger.of(context);
+                final can = await canLaunchUrl(url);
+                if (!can) {
+                  messenger.showSnackBar(const SnackBar(content: Text('Could not open GoFundMe')));
+                  return;
+                }
+                final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+                if (!launched) {
+                  messenger.showSnackBar(const SnackBar(content: Text('Could not open GoFundMe')));
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(children: const [
+                  Icon(Icons.favorite, color: Colors.black),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text('GoFundMe', style: TextStyle(
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Color(0xFF2D2D2D),
+                    )),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 2,
+          padding: EdgeInsets.zero,
+          child: SizedBox(
+            width: 240,
+            height: 48,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+                _showUpcomingFeaturesDialog(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(children: const [
+                  Icon(Icons.upcoming, color: Colors.black),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text('Upcoming Features', style: TextStyle(
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Color(0xFF2D2D2D),
+                    )),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Small dialog listing upcoming features (matches drawer content style)
+  void _showUpcomingFeaturesDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Upcoming Features', style: TextStyle(
+            fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 18, color: Color(0xFF212121),
+          )),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.smart_toy_outlined, color: theme.colorScheme.primary),
+                title: const Text('AI Coach', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
+                subtitle: const Text('Personal guidance 24/7'),
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.bar_chart_rounded, color: theme.colorScheme.primary),
+                title: const Text('Deep Analytics', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
+                subtitle: const Text('Insights & trends'),
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.groups_2_outlined, color: theme.colorScheme.primary),
+                title: const Text('Community Challenges', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
+                subtitle: const Text('Grow with others'),
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              style: OutlinedButton.styleFrom(side: BorderSide(color: theme.colorScheme.primary)),
+              child: const Text('Close', style: TextStyle(fontFamily: 'HelveticaNeue')),
+            ),
+          ],
+        );
+      },
+    );
+  }
     Widget welcomemessage(BuildContext context){
       final theme = Theme.of(context);
       return FutureBuilder<DocumentSnapshot>(

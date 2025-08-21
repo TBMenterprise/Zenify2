@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
         '/auth_layout': (context) => const AuthLayout(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
-        '/chat': (context) => ChatPage(),
+        '/chat': (context) => const ChatPage(),
         '/settings': (context) => const SettingsPage(),
         '/reset_password': (context) => const ResetPasswordPage(),
         '/start_page': (context) => const StartPage(),
