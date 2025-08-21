@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Authentication/auth_services.dart';
 import 'dart:math';
 import 'package:url_launcher/url_launcher.dart';
+import '../ai/premiumAI/services/ai_service.dart';
+import '../ai/premiumAI/widgets/chat_bubble.dart';
+import '../ai/premiumAI/Models/message.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -48,6 +51,28 @@ class _ChatPageState extends State<ChatPage> {
       }
     }
   }
+  final List<Message> _messages = [];
+  final TextEditingController _controller = TextEditingController();
+  bool _isTyping = false;
+
+  void _sendMessage() async {
+    final input = _controller.text.trim();
+    if (input.isEmpty || _isTyping) return;
+
+    setState(() {
+      _messages.add(Message(text: input, isUser: true));
+      _isTyping = true;
+      _controller.clear();
+    });
+
+    final response = await AIService.getResponse(input);
+
+    setState(() {
+      _messages.add(Message(text: response, isUser: false));
+      _isTyping = false;
+    });
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -59,28 +84,52 @@ class _ChatPageState extends State<ChatPage> {
       body: SafeArea(
         child: Column(children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22.0,vertical:24.0),
-              child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 24.0),
                 child: Column(children: [
                   const SizedBox(height: 10),
                   toprow(context),
                   const SizedBox(height: 112),
                   welcomemessage(context),
                   const SizedBox(height: 124),
-                  // Additional chat-related widgets will go here.
-                  chatContent(context),
+                  ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _messages.length,
+                      itemBuilder: (_, index) {
+                        final reversed = _messages.reversed.toList();
+                        return ChatBubble(
+                          message: reversed[index].text,
+                          isUser: reversed[index].isUser,
+                        );
+                      },
+                    ),
                 ]),
               ),
             ),
           ),
-          chatTextField(context),
-          if (MediaQuery.of(context).viewInsets.bottom > 0)
-            const SizedBox(height: 10),
+          if (_isTyping) const LinearProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: chatTextField(context),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.blue),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+          if (MediaQuery.of(context).viewInsets.bottom > 0) const SizedBox(height: 10),
         ]),
       ),
     );
-     
   }
   Widget menu(BuildContext context){
     final theme = Theme.of(context);
@@ -93,7 +142,7 @@ class _ChatPageState extends State<ChatPage> {
             gradient: LinearGradient(
               colors: [
                 theme.colorScheme.surface,
-                theme.colorScheme.surface.withValues(alpha: 0.98),
+                theme.colorScheme.surface,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -107,7 +156,7 @@ class _ChatPageState extends State<ChatPage> {
                   gradient: LinearGradient(
                     colors: [
                       theme.colorScheme.primary,
-                      theme.colorScheme.primary.withValues(alpha: 0.7),
+                      theme.colorScheme.primary,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -128,7 +177,7 @@ class _ChatPageState extends State<ChatPage> {
                           color: Colors.white,
                           shadows: [
                             Shadow(
-                              color: Colors.white.withValues(alpha: 0.25),
+                              color: Colors.white,
                               blurRadius: 12,
                             ),
                           ],
@@ -141,7 +190,7 @@ class _ChatPageState extends State<ChatPage> {
                           fontFamily: 'HelveticaNeue',
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -195,11 +244,11 @@ class _ChatPageState extends State<ChatPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Card(
                   elevation: 0,
-                  color: theme.colorScheme.surface.withValues(alpha: 0.7),
+                  color: theme.colorScheme.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                   child: Theme(
@@ -231,7 +280,7 @@ class _ChatPageState extends State<ChatPage> {
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              color: theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -259,7 +308,7 @@ class _ChatPageState extends State<ChatPage> {
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              color: theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -287,7 +336,7 @@ class _ChatPageState extends State<ChatPage> {
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                              color: theme.colorScheme.primary,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -422,6 +471,8 @@ class _ChatPageState extends State<ChatPage> {
       return SizedBox( height: 60,
           child :TextField(
             cursorColor: theme.colorScheme.primary,
+            controller: _controller,
+            onSubmitted: (value) => _sendMessage(),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -431,21 +482,12 @@ class _ChatPageState extends State<ChatPage> {
               // This is the border when the field is enabled but not focused.
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
               ),
               // This is the border when the field has focus (is being typed in).
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(100.0),
-                  topRight: Radius.circular(100.0),
-                  bottomLeft: Radius.circular(100.0),
-                  bottomRight: Radius.circular(100.0),
-
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
               ),
             ),
           ),
@@ -534,4 +576,3 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-
