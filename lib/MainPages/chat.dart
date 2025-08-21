@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Authentication/auth_services.dart';
 import 'dart:math';
 import 'package:url_launcher/url_launcher.dart';
+import '../ai/premiumAI/services/ai_service.dart';
+import '../ai/premiumAI/widgets/chat_bubble.dart';
+import '../ai/premiumAI/Models/message.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -48,6 +51,28 @@ class _ChatPageState extends State<ChatPage> {
       }
     }
   }
+  final List<Message> _messages = [];
+  final TextEditingController _controller = TextEditingController();
+  bool _isTyping = false;
+
+  void _sendMessage() async {
+    final input = _controller.text.trim();
+    if (input.isEmpty || _isTyping) return;
+
+    setState(() {
+      _messages.add(Message(text: input, isUser: true));
+      _isTyping = true;
+      _controller.clear();
+    });
+
+    final response = await AIService.getResponse(input);
+
+    setState(() {
+      _messages.add(Message(text: response, isUser: false));
+      _isTyping = false;
+    });
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -91,133 +116,91 @@ class _ChatPageState extends State<ChatPage> {
       body: SafeArea(
         child: Column(children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22.0,vertical:24.0),
-              child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 24.0),
                 child: Column(children: [
                   const SizedBox(height: 6),
                   const SizedBox(height: 112),
                   welcomemessage(context),
                   const SizedBox(height: 124),
-                  // Additional chat-related widgets will go here.
-                  chatContent(context),
+                  ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _messages.length,
+                      itemBuilder: (_, index) {
+                        final reversed = _messages.reversed.toList();
+                        return ChatBubble(
+                          message: reversed[index].text,
+                          isUser: reversed[index].isUser,
+                        );
+                      },
+                    ),
                 ]),
               ),
             ),
           ),
-          chatTextField(context),
-          if (MediaQuery.of(context).viewInsets.bottom > 0)
-            const SizedBox(height: 10),
+          if (_isTyping) const LinearProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: chatTextField(context),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.blue),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+          if (MediaQuery.of(context).viewInsets.bottom > 0) const SizedBox(height: 10),
         ]),
       ),
     );
-     
   }
-  
-  
-  Widget toprow(BuildContext context){
-    return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Menu icon now anchors the dropdown menu (replaces drawer)
-                      Builder(
-                        builder: (context) => IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.black),
-                          onPressed: () {
-                            final RenderBox button = context.findRenderObject() as RenderBox;
-                            final Offset topLeft = button.localToGlobal(Offset.zero);
-                            final Size size = button.size;
-                            _showMainMenu(context, topLeft, size);
-                          },
-                        ),
-                      ),
-                      // Settings button restored to original behavior
-                      IconButton(
-                        icon: const Icon(Icons.settings, color: Colors.black),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/settings');
-                        },
-                      ),
-                    ],
-                  );
-    }
-
-  // Shows the main dropdown menu anchored to the provided position/size.
-  void _showMainMenu(BuildContext context, Offset anchor, Size anchorSize) async {
-    final RelativeRect position = RelativeRect.fromLTRB(
-      anchor.dx,
-      anchor.dy + anchorSize.height,
-      anchor.dx + anchorSize.width,
-      anchor.dy,
-    );
-
-    await showMenu<int>(
-      context: context,
-      position: position,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFEAEAEA), width: 1),
-      ),
-      elevation: 4,
-      items: [
-        PopupMenuItem<int>(
-          value: 1,
-          padding: EdgeInsets.zero,
-          child: SizedBox(
-            width: 240,
-            height: 48,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                // Assumption: route name for conversations
-                Navigator.pushNamed(context, '/conversations');
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Row(
-                  children: const [
-                    Icon(Icons.history, color: Colors.black),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Conversations',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Color(0xFF2D2D2D),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+  Widget menu(BuildContext context){
+    final theme = Theme.of(context);
+    return Drawer(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(right: Radius.circular(24)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.surface,
+                theme.colorScheme.surface,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-        ),
-        PopupMenuItem<int>(
-          value: 2,
-          padding: EdgeInsets.zero,
-          child: SizedBox(
-            width: 240,
-            height: 48,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                // open the secondary menu anchored slightly below
-                _showSecondaryMenu(context, anchor + Offset(0, anchorSize.height + 8), anchorSize);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Row(
-                  children: const [
-                    Icon(Icons.more_horiz, color: Colors.black),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'More',
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'ZeniFY Menu',
                         style: TextStyle(
                           fontFamily: 'HelveticaNeue',
                           fontWeight: FontWeight.w500,
@@ -253,6 +236,20 @@ class _ChatPageState extends State<ChatPage> {
                     Expanded(
                       child: Text(
                         'Logout',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 26,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white,
+                              blurRadius: 12,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Elevate your day',
                         style: TextStyle(
                           fontFamily: 'HelveticaNeue',
                           fontWeight: FontWeight.w500,
@@ -320,117 +317,215 @@ class _ChatPageState extends State<ChatPage> {
                   SizedBox(width: 12),
                   Expanded(
                     child: Text('GoFundMe', style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // GoFundMe button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final url = Uri.parse('https://www.gofundme.com/your-campaign');
+                    final messenger = ScaffoldMessenger.of(context);
+                    final can = await canLaunchUrl(url);
+                    if (!can) {
+                      messenger.showSnackBar(
+                        const SnackBar(content: Text('Could not open GoFundMe')),
+                      );
+                      return;
+                    }
+                    final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+                    if (!launched) {
+                      messenger.showSnackBar(
+                        const SnackBar(content: Text('Could not open GoFundMe')),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.favorite, color: Colors.white),
+                  label: const Text(
+                    'Support us on GoFundMe',
+                    style: TextStyle(
                       fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      color: Color(0xFF2D2D2D),
-                    )),
+                    ),
                   ),
-                ]),
-              ),
-            ),
-          ),
-        ),
-        PopupMenuItem<int>(
-          value: 2,
-          padding: EdgeInsets.zero,
-          child: SizedBox(
-            width: 240,
-            height: 48,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                _showUpcomingFeaturesDialog(context);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Row(children: const [
-                  Icon(Icons.upcoming, color: Colors.black),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text('Upcoming Features', style: TextStyle(
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      color: Color(0xFF2D2D2D),
-                    )),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00C853), // Futuristic green
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
                   ),
-                ]),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Small dialog listing upcoming features (matches drawer content style)
-  void _showUpcomingFeaturesDialog(BuildContext context) {
-    final theme = Theme.of(context);
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Upcoming Features', style: TextStyle(
-            fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 18, color: Color(0xFF212121),
-          )),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.smart_toy_outlined, color: theme.colorScheme.primary),
-                title: const Text('AI Coach', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
-                subtitle: const Text('Personal guidance 24/7'),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
                 ),
               ),
-              ListTile(
-                leading: Icon(Icons.bar_chart_rounded, color: theme.colorScheme.primary),
-                title: const Text('Deep Analytics', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
-                subtitle: const Text('Insights & trends'),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
+              const SizedBox(height: 12),
+              // Upcoming Features section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Card(
+                  elevation: 0,
+                  color: theme.colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
-                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      leading: Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
+                      title: const Text(
+                        'Upcoming Features',
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Color(0xFF2D2D2D),
+                        ),
+                      ),
+                      childrenPadding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.smart_toy_outlined, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'AI Coach',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Personal guidance 24/7'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.bar_chart_rounded, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'Deep Analytics',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Insights & trends'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.groups_2_outlined, color: theme.colorScheme.primary),
+                          title: const Text(
+                            'Community Challenges',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: const Text('Grow with others'),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SOON',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeue',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(height: 4),
               ListTile(
-                leading: Icon(Icons.groups_2_outlined, color: theme.colorScheme.primary),
-                title: const Text('Community Challenges', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w600)),
-                subtitle: const Text('Grow with others'),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
+                leading: const Icon(Icons.logout, color: Colors.black),
+                title: const Text(
+                   'Logout',
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeue',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: Color(0xFF2D2D2D),
                   ),
-                  child: Text('SOON', style: TextStyle(fontFamily: 'HelveticaNeue', fontWeight: FontWeight.w700, fontSize: 12, color: theme.colorScheme.primary)),
                 ),
+                onTap: () {
+                  _showLogoutConfirmationDialog(context);
+                },
               ),
             ],
           ),
-          actions: [
-            OutlinedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              style: OutlinedButton.styleFrom(side: BorderSide(color: theme.colorScheme.primary)),
-              child: const Text('Close', style: TextStyle(fontFamily: 'HelveticaNeue')),
-            ),
-          ],
-        );
-      },
-    );
+        ),
+      );
   }
+  
+  Widget toprow(BuildContext context){
+    return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Use a Builder to get the correct context for Scaffold.of()
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.black),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.settings, color: Colors.black),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/settings');
+                        },
+                      ),
+                    ],
+                  );
+    }
     Widget welcomemessage(BuildContext context){
       final theme = Theme.of(context);
       return FutureBuilder<DocumentSnapshot>(
@@ -505,6 +600,8 @@ class _ChatPageState extends State<ChatPage> {
       return SizedBox( height: 60,
           child :TextField(
             cursorColor: theme.colorScheme.primary,
+            controller: _controller,
+            onSubmitted: (value) => _sendMessage(),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -514,21 +611,12 @@ class _ChatPageState extends State<ChatPage> {
               // This is the border when the field is enabled but not focused.
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
               ),
               // This is the border when the field has focus (is being typed in).
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(100.0),
-                  topRight: Radius.circular(100.0),
-                  bottomLeft: Radius.circular(100.0),
-                  bottomRight: Radius.circular(100.0),
-
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
               ),
             ),
           ),
@@ -617,4 +705,3 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-

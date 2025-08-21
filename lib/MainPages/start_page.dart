@@ -52,6 +52,14 @@ class StartPage extends StatelessWidget {
                     style: theme.textTheme.labelLarge?.copyWith(color:Colors.white),
                   ),
                 ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(context, '/chat'),
+                  child: Text(
+                    'Developer Sign In',
+                    style: theme.textTheme.labelLarge?.copyWith(color:Colors.white),
+                  ),
+                ),
               ],
             ),
           ),

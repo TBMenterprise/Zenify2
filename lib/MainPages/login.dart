@@ -81,6 +81,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 14), // 24dp gap
               _signUpPrompt(),
               SizedBox(height:25),// tom padding
+              
             ],
             ),
           ),
@@ -356,6 +357,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 
   Widget _signUpPrompt() {
     return GestureDetector(

@@ -56,24 +56,6 @@ class _SignUpPageState extends State<SignUpPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            Positioned(
-              top: 0,
-              right: 0,
-              child: SvgPicture.asset(
-                'assets/background.svg', // Assuming this is your pattern SVG
-                width: 150,
-                height: 150,
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: SvgPicture.asset(
-                'assets/background.svg', // Assuming this is your pattern SVG
-                width: 150,
-                height: 150,
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: SingleChildScrollView(
