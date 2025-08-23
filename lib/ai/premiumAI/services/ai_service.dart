@@ -1,25 +1,22 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AIService {
-  static const _apiUrl = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
-  static const _apiKey = "YOUR_HUGGINGFACE_TOKEN"; // Insert your token
+  final String _apiKey = 'AIzaSyCfVX9EoVWUlBpvcdtbyh1utNWjMG3ix8U';
+  late final GenerativeModel _model;
 
-  static Future<String> getResponse(String prompt) async {
-    final response = await http.post(
-      Uri.parse(_apiUrl),
-      headers: {
-        "Authorization": "Bearer $_apiKey",
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode({"inputs": prompt}),
-    );
+  AIService() {
+    _model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: _apiKey);
+  }
 
-    if (response.statusCode == 200) {
-      final decoded = jsonDecode(response.body);
-      return decoded[0]["generated_text"] ?? "I couldn’t think of a reply.";
-    } else {
-      return "Error: ${response.statusCode}";
+  Future<String> getResponse(String text) async {
+    try {
+      final content = [Content.text(text)];
+      final response = await _model.generateContent(content);
+      return response.text ?? '';
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error getting response from Gemini: $e');
+      return 'Sorry, something went wrong.';
     }
   }
 }

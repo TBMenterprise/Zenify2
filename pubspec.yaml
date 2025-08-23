@@ -41,6 +41,8 @@ dependencies:
   url_launcher: ^6.3.1
   google_sign_in: ^6.0.0
   http: ^1.0.0
+  google_generative_ai: ^0.4.7 # you might choose to use Gemini,
+        # or Vertex AI or both
 
 dev_dependencies:
   flutter_test:
