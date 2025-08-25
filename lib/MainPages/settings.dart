@@ -282,7 +282,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ...[
                     {'title': 'Update Username'},
                     {'title': 'Change Password'},
-                    {'title': 'Support Us'},
+                    {'title': 'Go Premium'},
                     {'title': 'Help & Support'},
                     {'title': 'Delete Account'},
                   ].map(
@@ -316,6 +316,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               Navigator.pushNamed(context, '/delete_account');
                             } else if (item['title'] == 'Update Username') {
                               Navigator.pushNamed(context, '/change_username');
+                            } else if (item['title'] == 'Go Premium') {
+                              Navigator.pushNamed(context, '/go_premium');
                             }
                           },
                         ),

@@ -16,13 +16,17 @@ import '../Authentication/user_profile_setup.dart'; // Imports the UserProfileSe
 import '../SubPages/delete_account.dart'; // Imports the DeleteAccountPage widget.
 import '../SubPages/change_username.dart'; // Imports the ChangeUsernamePage widget.
 import '../SubPages/update_password.dart'; // Imports the UpdatePasswordPage widget.
+import '../SubPages/go_premium.dart'; // Imports the GoPremiumPage widget.
+import 'package:flutter/foundation.dart' show kIsWeb; // For platform check (web vs others)
 
 // The main entry point of the application.
 void main() async {
   // Ensures that the Flutter bindings are initialized.
   WidgetsFlutterBinding.ensureInitialized();
-  // Initializes Firebase.
-  await Firebase.initializeApp();
+  // Initializes Firebase (skip on web for preview without web config).
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+  }
 
   // Runs the application.
   runApp(const MyApp());
@@ -140,7 +144,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // Sets the initial route of the application.
-      initialRoute: '/auth_layout',
+      initialRoute: kIsWeb ? '/go_premium' : '/auth_layout',
       // Sets the routes of the application.
       routes: {
         // The route for the AuthLayout widget.
@@ -165,6 +169,8 @@ class MyApp extends StatelessWidget {
         '/change_username': (context) => const ChangeUsernamePage(),
         // The route for the UpdatePasswordPage widget.
         '/update_password': (context) => const UpdatePasswordPage(),
+        // The route for the GoPremiumPage widget.
+        '/go_premium': (context) => GoPremiumPage(),
       },
     );
   }

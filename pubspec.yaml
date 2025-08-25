@@ -41,6 +41,12 @@ dependencies:
   url_launcher: ^6.3.1
   google_sign_in: ^6.0.0
   http: ^1.0.0
+  getwidget: ^6.0.0
+  timelines: ^0.1.0 
+  flutter_spinkit: ^5.2.2
+  awesome_snackbar_content: ^0.1.7
+  animations: ^2.0.11
+  clippy_flutter: ^2.0.0-nullsafety.1
   google_generative_ai: ^0.4.7 # you might choose to use Gemini,
         # or Vertex AI or both
 
@@ -64,8 +70,12 @@ flutter:
   assets:
     - assets/signInImage.png
     - assets/bluegoogleicon.svg
+    - assets/GOPremiumbackground.png.png
+    - assets/GoPremiumTicked.svg.svg
+    - assets/GoPremiumTickedBenifits.svg.svg
+    - assets/GoPremiumUnticked.svg.svg
+    - assets/GoPremiumcloseicon.svg.svg
     
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
