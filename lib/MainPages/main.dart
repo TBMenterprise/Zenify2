@@ -13,10 +13,6 @@ import 'package:firebase_core/firebase_core.dart'; // Imports the Firebase Core 
 import '../SubPages/reset_password.dart'; // Imports the ResetPasswordPage widget.
 import 'start_page.dart'; // Imports the StartPage widget.
 import '../Authentication/user_profile_setup.dart'; // Imports the UserProfileSetupPage widget.
-import '../SubPages/delete_account.dart'; // Imports the DeleteAccountPage widget.
-import '../SubPages/change_username.dart'; // Imports the ChangeUsernamePage widget.
-import '../SubPages/update_password.dart'; // Imports the UpdatePasswordPage widget.
-import '../SubPages/go_premium.dart'; // Imports the GoPremiumPage widget.
 import 'package:flutter/foundation.dart' show kIsWeb; // For platform check (web vs others)
 
 // The main entry point of the application.
@@ -163,14 +159,6 @@ class MyApp extends StatelessWidget {
         '/start_page': (context) => const StartPage(),
         // The route for the UserProfileSetupPage widget.
         '/user_profile_setup': (context) => const UserProfileSetupPage(),
-        // The route for the DeleteAccountPage widget.
-        '/delete_account': (context) => const DeleteAccountPage(),
-        // The route for the ChangeUsernamePage widget.
-        '/change_username': (context) => const ChangeUsernamePage(),
-        // The route for the UpdatePasswordPage widget.
-        '/update_password': (context) => const UpdatePasswordPage(),
-        // The route for the GoPremiumPage widget.
-        '/go_premium': (context) => GoPremiumPage(),
       },
     );
   }

@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Authentication/auth_services.dart';
 import '../SubPages/update_password.dart';
+import '../SubPages/change_username.dart';
+import '../SubPages/go_premium.dart';
+import '../SubPages/delete_account.dart';
 import 'dart:math';
 
 class SettingsPage extends StatefulWidget {
@@ -306,18 +309,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           tileColor: Colors.white,
                           onTap: () {
                             if (item['title'] == 'Change Password') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const UpdatePasswordPage(),
-                                ),
-                              );
+                              showUpdatePasswordBottomSheet(context);
                             } else if (item['title'] == 'Delete Account') {
-                              Navigator.pushNamed(context, '/delete_account');
+                              showDeleteAccountBottomSheet(context);
                             } else if (item['title'] == 'Update Username') {
-                              Navigator.pushNamed(context, '/change_username');
+                              showChangeUsernameBottomSheet(context);
                             } else if (item['title'] == 'Go Premium') {
-                              Navigator.pushNamed(context, '/go_premium');
+                              showGoPremiumBottomSheet(context);
                             }
                           },
                         ),

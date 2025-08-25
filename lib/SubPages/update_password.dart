@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Authentication/auth_services.dart';
+import 'package:mainproject/widgets/settings_bottom_sheet.dart';
+
+void showUpdatePasswordBottomSheet(BuildContext context) {
+  showSettingsBottomSheet(
+    context,
+    UpdatePasswordPage(),
+  );
+}
 
 class UpdatePasswordPage extends StatefulWidget {
   const UpdatePasswordPage({super.key});
@@ -73,56 +81,60 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+    return Column(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              const Text(
+                'Change Password',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Body
+        Expanded(
           child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  _backArrow(),
-                  const SizedBox(height: 20),
-                  _titleText(),
-                  const SizedBox(height: 12),
-                  _subtitleText(),
-                  const SizedBox(height: 32),
-                  _currentPasswordField(),
-                  const SizedBox(height: 16),
-                  _newPasswordField(),
-                  const SizedBox(height: 16),
-                  _confirmPasswordField(),
-                  const SizedBox(height: 32),
-                  _updateButton(),
-                ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    _subtitleText(),
+                    const SizedBox(height: 32),
+                    _currentPasswordField(),
+                    const SizedBox(height: 16),
+                    _newPasswordField(),
+                    const SizedBox(height: 16),
+                    _confirmPasswordField(),
+                    const SizedBox(height: 32),
+                    _updateButton(),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _backArrow() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: GestureDetector(
-        onTap: () => Navigator.of(context).pop(),
-        child: Container(
-          width: 48,
-          height: 48,
-          alignment: Alignment.center,
-          child: const Icon(
-            Icons.arrow_back_ios,
-            size: 24,
-            color: Color(0xFF2D2D2D),
-          ),
-        ),
-      ),
+      ],
     );
   }
 

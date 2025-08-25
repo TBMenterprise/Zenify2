@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mainproject/widgets/settings_bottom_sheet.dart';
+
+void showGoPremiumBottomSheet(BuildContext context) {
+  showSettingsBottomSheet(
+    context,
+    GoPremiumPage(),
+  );
+}
 
 class GoPremiumPage extends StatefulWidget {
   const GoPremiumPage({Key? key}) : super(key: key);
@@ -13,61 +21,48 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(
+    return Material(
+      child: SingleChildScrollView(
         child: Column(
           children: [
-            // Top bar with close button and restore button
+            // Top bar with close button and title
             Padding(
               padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  // Close button
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset(
-                        'assets/GoPremiumcloseicon.svg',
-                        width: 28,
-                        height: 28,
-                      ),
+                  const Text(
+                    'Go Premium',
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Neue',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: Color(0xFF000000),
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  // Restore button
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF3DA9FC), Color(0xFF0077FF)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'Restore',
-                      style: TextStyle(
-                        fontFamily: 'Helvetica Neue',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: Color(0xFF000000),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset(
+                          'assets/GoPremiumcloseicon.svg',
+                          width: 28,
+                          height: 28,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            
-            const SizedBox(height: 60),
-            
+
+            const SizedBox(height: 20),
+
             // Title section
             const Text(
               'Unlimited Access',
@@ -80,9 +75,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 10),
-            
+
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -97,9 +92,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             const SizedBox(height: 28),
-            
+
             // Benefits list
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -115,9 +110,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 28),
-            
+
             // Pricing cards
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -146,9 +141,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 28),
-            
+
             // Unlock Access button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -186,9 +181,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Footer links
             const Text(
               'Terms of use | Privacy Policy | Restore',
@@ -200,22 +195,22 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
-  
+
   Widget _buildBenefitItem(String text, bool isChecked) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SvgPicture.asset(
-          isChecked 
-            ? 'assets/GoPremiumTickedBenifits.svg'
-            : 'assets/GoPremiumUnticked.svg',
+          isChecked
+              ? 'assets/GoPremiumTickedBenifits.svg'
+              : 'assets/GoPremiumUnticked.svg',
           width: 20,
           height: 20,
           fit: BoxFit.contain,
@@ -236,7 +231,7 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
       ],
     );
   }
-  
+
   Widget _buildPricingCard({
     required String title,
     required String price,
@@ -273,9 +268,9 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                   ),
                 ),
                 SvgPicture.asset(
-                  isSelected 
-                    ? 'assets/GoPremiumTicked.svg'
-                : 'assets/GoPremiumUnticked.svg',
+                  isSelected
+                      ? 'assets/GoPremiumTicked.svg'
+                      : 'assets/GoPremiumUnticked.svg',
                   width: 20,
                   height: 20,
                 ),
@@ -292,37 +287,37 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
               ),
             ),
             if (badge != null) ...[
-               const SizedBox(height: 4),
-               Container(
-                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                 decoration: BoxDecoration(
-                   color: const Color(0xFFF5F5F5),
-                   borderRadius: BorderRadius.circular(10),
-                 ),
-                 child: Text(
-                   badge,
-                   style: const TextStyle(
-                     fontFamily: 'Helvetica Neue',
-                     fontWeight: FontWeight.normal,
-                     fontSize: 12,
-                     color: Color(0xFF666666),
-                   ),
-                 ),
-               ),
-             ],
-             const SizedBox(height: 8),
-             Text(
-               subtitle,
-               style: const TextStyle(
-                 fontFamily: 'Helvetica Neue',
-                 fontWeight: FontWeight.normal,
-                 fontSize: 13,
-                 color: Color(0xFF666666),
-               ),
-             ),
-           ],
-         ),
-       ),
-     );
-   }
- }
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  badge,
+                  style: const TextStyle(
+                    fontFamily: 'Helvetica Neue',
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontFamily: 'Helvetica Neue',
+                fontWeight: FontWeight.normal,
+                fontSize: 13,
+                color: Color(0xFF666666),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
