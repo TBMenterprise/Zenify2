@@ -68,14 +68,7 @@ flutter:
 
   #To add assets to your application, add an assets section, like this:
   assets:
-    - assets/signInImage.png
-    - assets/bluegoogleicon.svg
-    - assets/GOPremiumbackground.png.png
-    - assets/GoPremiumTicked.svg.svg
-    - assets/GoPremiumTickedBenifits.svg.svg
-    - assets/GoPremiumUnticked.svg.svg
-    - assets/GoPremiumcloseicon.svg.svg
-    - assets/chatbackground.png
+    - assets/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
