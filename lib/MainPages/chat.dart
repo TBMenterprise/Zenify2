@@ -89,16 +89,21 @@ class _ChatPageState extends State<ChatPage> {
   // Builds the UI for the chat page.
   @override
   Widget build(BuildContext context) {
-    // Gets the current theme.
-    final theme = Theme.of(context);
     // Returns a Scaffold widget, which provides a basic layout structure.
-    return Scaffold(
-      // Sets the background color of the page.
-      backgroundColor: theme.colorScheme.surface,
-      // Sets the app bar for the page.
-      appBar: _buildAppBar(),
-      // Sets the body of the page.
-      body: _buildBody(),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/chatbackground.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // Sets the app bar for the page.
+        appBar: _buildAppBar(),
+        // Sets the body of the page.
+        body: _buildBody(),
+      ),
     );
   }
 
@@ -160,65 +165,62 @@ class _ChatPageState extends State<ChatPage> {
 
   // Builds the body of the chat page.
   Widget _buildBody() {
-    // Returns a SafeArea widget, which ensures that the content is not obscured by system UI.
     return SafeArea(
-      // A column to arrange the widgets vertically.
       child: Column(
-        // The children of the column.
         children: [
-          // The welcome message.
           _buildWelcomeMessage(),
-          // An expanded widget to fill the available space.
           Expanded(
-            // A list view to display the chat messages.
             child: ListView.builder(
-              // Reverses the order of the messages.
               reverse: true,
-              // Sets the padding for the list view.
               padding: const EdgeInsets.all(8),
-              // Sets the number of items in the list.
               itemCount: _messages.length,
-              // Builds each item in the list.
               itemBuilder: (_, index) {
-                // Gets the message at the current index.
                 final message = _messages[index];
-                // Returns a ChatBubble widget for the message.
                 return ChatBubble(
-                  // The message text.
                   message: message.text,
-                  // Whether the message is from the user.
                   isUser: message.isUser,
                 );
               },
             ),
           ),
-          // A linear progress indicator to show when the AI is typing.
           if (_isTyping) const LinearProgressIndicator(),
-          // A padding widget to add padding around the chat input field.
-          Padding(
-            // The padding values.
-            padding: const EdgeInsets.all(8.0),
-            // A row to arrange the widgets horizontally.
-            child: Row(
-              // The children of the row.
-              children: [
-                // An expanded widget to fill the available space.
-                Expanded(
-                  // The chat text field.
-                  child: _chatTextField(context),
+          _buildInputArea(),
+          if (MediaQuery.of(context).viewInsets.bottom > 0)
+            const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputArea() {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: "Ask me anything...",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
                 ),
-                // An icon button to send the message.
-                IconButton(
-                  // The send icon.
-                  icon: const Icon(Icons.send, color: Colors.blue),
-                  // The action to perform when the button is pressed.
-                  onPressed: () => _sendMessage(_controller.text),
-                ),
-              ],
+              ),
             ),
           ),
-          // A sized box to add some space when the keyboard is open.
-          if (MediaQuery.of(context).viewInsets.bottom > 0) const SizedBox(height: 10),
+          const SizedBox(width: 8),
+          CircleAvatar(
+            backgroundColor: Colors.green,
+            child: IconButton(
+              icon: const Icon(Icons.send, color: Colors.white),
+              onPressed: () => _sendMessage(_controller.text),
+            ),
+          ),
         ],
       ),
     );
@@ -274,46 +276,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  // Builds the chat text field.
-  Widget _chatTextField(BuildContext context) {
-    // Gets the current theme.
-    final theme = Theme.of(context);
-    // Returns a SizedBox widget to set the height of the text field.
-    return SizedBox(
-      // The height of the text field.
-      height: 60,
-      // The text field widget.
-      child: TextField(
-        // The color of the cursor.
-        cursorColor: theme.colorScheme.primary,
-        // The controller for the text field.
-        controller: _controller,
-        // The decoration for the text field.
-        decoration: InputDecoration(
-          // Whether the text field is filled.
-          filled: true,
-          // The fill color of the text field.
-          fillColor: Colors.white,
-          // The hint text for the text field.
-          hintText: 'Type away',
-          // The border for the text field when it is enabled.
-          enabledBorder: OutlineInputBorder(
-            // The border side.
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-            // The border radius.
-            borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-          ),
-          // The border for the text field when it is focused.
-          focusedBorder: OutlineInputBorder(
-            // The border side.
-            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
-            // The border radius.
-            borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-          ),
-        ),
-      ),
-    );
-  }
+
 
   // Builds a menu item for the main menu.
   PopupMenuItem<int> _buildMenuItem({
@@ -387,6 +350,7 @@ class _ChatPageState extends State<ChatPage> {
       anchor.dy,
     );
     // Shows the menu.
+    if (!mounted) return;
     await showMenu<int>(
       // The context for the menu.
       context: context,
@@ -457,6 +421,7 @@ class _ChatPageState extends State<ChatPage> {
       anchor.dy,
     );
     // Shows the menu.
+    if (!mounted) return;
     await showMenu<int>(
       // The context for the menu.
       context: context,
@@ -689,6 +654,15 @@ class _ChatPageState extends State<ChatPage> {
       });
       // Catches any exceptions.
     } catch (e) {
+      // Logs the error for debugging.
+      debugPrint('Error sending message: $e');
+      // Shows a SnackBar with an error message.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to send message. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       // Sets the state to show an error message.
       setState(() {
         // Inserts an error message at the beginning of the list.

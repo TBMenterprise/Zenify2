@@ -160,7 +160,21 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle unlock access
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Unlock Access functionality coming soon!'),
+                        backgroundColor: Colors.blueAccent,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        margin: const EdgeInsets.only(
+                          bottom: 20,
+                          right: 20,
+                          left: 20,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

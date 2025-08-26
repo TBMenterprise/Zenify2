@@ -62,11 +62,28 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         Navigator.of(context).pop(true);
       } on FirebaseAuthException catch (e) {
         if (!mounted) return;
+        String errorMessage;
+        switch (e.code) {
+          case 'wrong-password':
+            errorMessage = 'The current password you entered is incorrect.';
+            break;
+          case 'too-many-requests':
+            errorMessage = 'Too many attempts. Please try again later.';
+            break;
+          case 'user-not-found':
+            errorMessage = 'User not found. Please log in again.';
+            break;
+          case 'requires-recent-login':
+            errorMessage = 'This operation is sensitive and requires recent authentication. Please log in again.';
+            break;
+          default:
+            errorMessage = e.message ?? 'Failed to update password. Please try again.';
+        }
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Error'),
-            content: Text(e.message ?? 'Failed to update password. Please try again.'),
+            content: Text(errorMessage),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -138,22 +155,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     );
   }
 
-  Widget _titleText() {
-    return Center(
-      child: Text(
-        'Change Password',
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
-          fontWeight: FontWeight.w700,
-          fontSize: 30,
-          height: 1.2,
-          letterSpacing: -0.2,
-          color: Color(0xFF3A3A3C),
-        ),
-      ),
-    );
-  }
+
 
   Widget _subtitleText() {
     return Center(
