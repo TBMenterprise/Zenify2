@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // Imports the Firebase Auth 
 import 'package:cloud_firestore/cloud_firestore.dart'; // Imports the Cloud Firestore library, which provides a cloud-based NoSQL database.
 import 'dart:math'; // Imports the Dart Math library, which provides mathematical functions.
 import 'package:url_launcher/url_launcher.dart'; // Imports the URL Launcher library, which allows opening URLs.
+import 'package:flutter_svg/flutter_svg.dart'; // Imports the Flutter SVG library for SVG image support.
 import '../ai/premiumAI/services/ai_service.dart'; // Imports the AI service, which provides AI-powered chat responses.
 import '../ai/premiumAI/widgets/chat_bubble.dart'; // Imports the Chat Bubble widget, which is used to display chat messages.
 
@@ -114,20 +115,42 @@ class _ChatPageState extends State<ChatPage> {
       // Sets the leading widget in the app bar, which is a menu button.
       leading: Builder(
         // A builder for the menu button.
-        builder: (context) => IconButton(
-          // The menu icon.
-          icon: const Icon(Icons.menu, color: Color(0xFF2D2D2D)),
-          // The action to perform when the button is pressed.
-          onPressed: () {
-            // Gets the render box of the button.
-            final RenderBox button = context.findRenderObject() as RenderBox;
-            // Gets the top-left position of the button.
-            final Offset topLeft = button.localToGlobal(Offset.zero);
-            // Gets the size of the button.
-            final Size size = button.size;
-            // Shows the main menu.
-            _showMainMenu(context, topLeft, size);
-          },
+        builder: (context) => 
+        // A padding widget to add horizontal padding to the button.
+        Padding(
+          // The padding value.
+          padding: const EdgeInsets.only(left: 18.0),
+          // An align widget to align the button to the center left.
+          child: Align(
+            // The alignment value.
+            alignment: Alignment.centerLeft, // Adjust vertical alignment here
+            // A gesture detector to detect taps on the button.
+            child: GestureDetector(
+              // The callback for when the button is tapped.
+              onTap: () {
+                // Gets the render box of the button.
+                final RenderBox button = context.findRenderObject() as RenderBox;
+                // Gets the top left offset of the button.
+                final Offset topLeft = button.localToGlobal(Offset.zero);
+                // Gets the size of the button.
+                final Size size = button.size;
+                // Shows the main menu.
+                _showMainMenu(context, topLeft, size);
+              },
+              // A sized box to give the button a fixed size.
+              child: SizedBox(
+                // The width of the button.
+                width: 48.0, // Standard IconButton width
+                // The height of the button.
+                height: 48.0, // Standard IconButton height
+                // A center widget to center the icon in the button.
+                child: Center(
+                  // The icon for the button.
+                  child: SvgPicture.asset('assets/lucide--align-left.svg', width: 24.0, height: 24.0, colorFilter: const ColorFilter.mode(Color(0xFF2D2D2D), BlendMode.srcIn)),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
       // Sets the title of the app bar.
@@ -153,11 +176,32 @@ class _ChatPageState extends State<ChatPage> {
       // Sets the actions for the app bar, which is a settings button.
       actions: [
         // An icon button for the settings page.
-        IconButton(
-          // The settings icon.
-          icon: const Icon(Icons.settings, color: Color(0xFF2D2D2D)),
-          // The action to perform when the button is pressed.
-          onPressed: () => Navigator.pushNamed(context, '/settings'),
+        // A padding widget to add horizontal padding to the button.
+        Padding(
+          // The padding value.
+          padding: const EdgeInsets.only(right: 18.0),
+          // An align widget to align the button to the center right.
+          child: Align(
+            // The alignment value.
+            alignment: Alignment.centerRight, // Adjust vertical alignment here
+            // A gesture detector to detect taps on the button.
+            child: GestureDetector(
+              // The callback for when the button is tapped.
+              onTap: () => Navigator.pushNamed(context, '/settings'),
+              // A sized box to give the button a fixed size.
+              child: SizedBox(
+                // The width of the button.
+                width: 48.0, // Standard IconButton width
+                // The height of the button.
+                height: 48.0, // Standard IconButton height
+                // A center widget to center the icon in the button.
+                child: Center(
+                  // The icon for the button.
+                  child: SvgPicture.asset('assets/lucide--settings.svg', width: 24.0, height: 24.0, colorFilter: const ColorFilter.mode(Color(0xFF2D2D2D), BlendMode.srcIn)),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -200,8 +244,8 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
                 controller: _controller,
@@ -214,11 +258,30 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           const SizedBox(width: 8),
-          CircleAvatar(
-            backgroundColor: Colors.green,
-            child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white),
-              onPressed: () => _sendMessage(_controller.text),
+          // Send button: accessible and keyboard-focusable, uses the SVG asset directly.
+          Semantics(
+            label: 'Send message',
+            button: true,
+            child: Tooltip(
+              message: 'Send',
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(27),
+                  onTap: () => _sendMessage(_controller.text),
+                  child: SizedBox(
+                    width: 54,
+                    height: 54,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/sendmessage.svg',
+                        width: 54.0,
+                        height: 54.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
