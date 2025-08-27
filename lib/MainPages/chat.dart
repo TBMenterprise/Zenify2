@@ -48,7 +48,7 @@ class _ChatPageState extends State<ChatPage> {
     // Gets the current user's UID.
     final uid = FirebaseAuth.instance.currentUser?.uid;
     // If there is no user, throws a state error.
-    if (uid == null) throw StateError('No Firebase user');
+    ///if (uid == null) throw StateError('No Firebase user');
     // Initializes the attempt counter.
     int attempt = 0;
     // Initializes the delay duration.
@@ -259,29 +259,20 @@ class _ChatPageState extends State<ChatPage> {
           ),
           const SizedBox(width: 8),
           // Send button: accessible and keyboard-focusable, uses the SVG asset directly.
-          Semantics(
-            label: 'Send message',
-            button: true,
-            child: Tooltip(
-              message: 'Send',
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(27),
-                  onTap: () => _sendMessage(_controller.text),
-                  child: SizedBox(
-                    width: 54,
-                    height: 54,
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/sendmessage.svg',
-                        width: 54.0,
-                        height: 54.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+          IconButton(
+            icon: const Icon(
+              Icons.send,
+              color: Colors.white,
+              size: 24,
+               // Re-adding color property
+            ),
+            onPressed: () {
+              _sendMessage(_controller.text.trim());
+            },
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.transparent, // Set background to transparent
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(12),
             ),
           ),
         ],

@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../Authentication/auth_services.dart';
 import '../SubPages/update_password.dart';
+import '../SubPages/change_username.dart';
+import '../SubPages/go_premium.dart';
+import '../SubPages/delete_account.dart';
 import 'dart:math';
 
 class SettingsPage extends StatefulWidget {
@@ -282,6 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ...[
                     {'title': 'Update Username'},
                     {'title': 'Change Password'},
+                    {'title': 'Go Premium'},
                     {'title': 'Support Us'},
                     {'title': 'Help & Support'},
                     {'title': 'Delete Account'},
@@ -306,6 +310,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           tileColor: Colors.white,
                           onTap: () {
                             if (item['title'] == 'Change Password') {
+                              showUpdatePasswordBottomSheet(context);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -313,8 +318,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                               );
                             } else if (item['title'] == 'Delete Account') {
+                              showDeleteAccountBottomSheet(context);
                               Navigator.pushNamed(context, '/delete_account');
                             } else if (item['title'] == 'Update Username') {
+                              showChangeUsernameBottomSheet(context);
+                            } else if (item['title'] == 'Go Premium') {
+                              showGoPremiumBottomSheet(context);
                               Navigator.pushNamed(context, '/change_username');
                             }
                           },
@@ -350,5 +359,5 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
-  }
+    }
 }
