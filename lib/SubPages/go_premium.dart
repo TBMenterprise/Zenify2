@@ -22,7 +22,11 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: SingleChildScrollView(
+      child: Stack( 
+        fit: StackFit.expand,
+        children: [
+         Image(image:AssetImage('assets/PremiumBackground.png'),fit: BoxFit.cover),
+      SingleChildScrollView(
         child: Column(
           children: [
             // Top bar with close button and title
@@ -46,13 +50,14 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        width: 44,
-                        height: 44,
+                        width: 70,
+                        height: 70,
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
                           'assets/GoPremiumcloseicon.svg',
-                          width: 28,
-                          height: 28,
+                          width: 70,
+                          height: 70,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -86,7 +91,7 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                   fontFamily: 'Helvetica Neue',
                   fontWeight: FontWeight.normal,
                   fontSize: 15,
-                  color: Color(0xFF666666),
+                  color: Colors.black,
                   height: 1.2,
                 ),
                 textAlign: TextAlign.center,
@@ -104,7 +109,7 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
                   const SizedBox(height: 16),
                   _buildBenefitItem('Smarter AI + Better Memory', true),
                   const SizedBox(height: 16),
-                  _buildBenefitItem('Custom Background Image', false),
+                  _buildBenefitItem('Custom Background Image', true),
                   const SizedBox(height: 16),
                   _buildBenefitItem('Talk to your AI', true),
                 ],
@@ -214,6 +219,7 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
           ],
         ),
       ),
+      ]),
     );
   }
 
@@ -223,10 +229,10 @@ class _GoPremiumPageState extends State<GoPremiumPage> {
       children: [
         SvgPicture.asset(
           isChecked
-              ? 'assets/GoPremiumTickedBenifits.svg'
+              ? 'assets/GoPremiumTicked.svg'
               : 'assets/GoPremiumUnticked.svg',
-          width: 20,
-          height: 20,
+          width: 16,
+          height: 16,
           fit: BoxFit.contain,
         ),
         const SizedBox(width: 12),
