@@ -10,10 +10,10 @@ void showGoPremiumBottomSheet(BuildContext context) {
 }
 
 class GoPremiumPage extends StatefulWidget {
-  const GoPremiumPage({Key? key}) : super(key: key);
+  const GoPremiumPage({super.key});
 
   @override
-  _GoPremiumPageState createState() => _GoPremiumPageState();
+  State<GoPremiumPage> createState() => _GoPremiumPageState();
 }
 
 class _GoPremiumPageState extends State<GoPremiumPage> {

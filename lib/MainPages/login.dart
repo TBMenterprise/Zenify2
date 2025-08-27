@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../Authentication/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,17 +23,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> signIn() async {
-    try {
-      await authService.value.signIn(
-        email: controllerEmail.text,
-        password: controllerPassword.text,
-      );
-      if (!mounted) return;
+    // Simple validation
+    if (formKey.currentState!.validate()) {
+      // Navigate to chat page without authentication
       Navigator.of(context).pushReplacementNamed('/chat');
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message ?? 'An unknown error occurred.';
-      });
     }
   }
 
@@ -131,27 +122,8 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: ElevatedButton(
         onPressed: () async {
-          try {
-            setState(() {
-              errorMessage = '';
-            });
-            final credential = await authService.value.signInWithGoogle(context);
-            if (!mounted) return;
-            final isNew = credential?.additionalUserInfo?.isNewUser ?? false;
-            if (isNew) {
-              Navigator.pushReplacementNamed(context, '/user_profile_setup');
-            } else {
-              Navigator.pushReplacementNamed(context, '/chat');
-            }
-          } on FirebaseAuthException catch (e) {
-            setState(() {
-              errorMessage = e.message ?? 'An unknown error occurred.';
-            });
-          } catch (e) {
-            setState(() {
-              errorMessage = 'An unexpected error occurred: ${e.toString()}';
-            });
-          }
+          if (!mounted) return;
+          Navigator.pushReplacementNamed(context, '/chat');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -206,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextFormField(
-        controller: controllerEmail,
         cursorColor: Color(0xFF2D2D2D),
         style: TextStyle(
           fontFamily: 'HelveticaNeue',
@@ -228,12 +199,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your email';
-          }
-          return null;
-        },
       ),
     );
   }
@@ -244,7 +209,6 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextFormField(
-        controller: controllerPassword,
         obscureText: !_isPasswordVisible,
         cursorColor: Color(0xFF2D2D2D),
         style: TextStyle(
@@ -278,12 +242,6 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your password';
-          }
-          return null;
-        },
       ),
     );
   }
@@ -334,9 +292,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          if (formKey.currentState!.validate()) {
-            signIn();
-          }
+          Navigator.of(context).pushReplacementNamed('/chat');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor:  const Color.fromARGB(255, 64, 137, 226),

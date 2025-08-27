@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../Authentication/auth_services.dart';
 import '../SubPages/update_password.dart';
-import '../SubPages/change_username.dart';
 import '../SubPages/go_premium.dart';
 import '../SubPages/delete_account.dart';
-import 'dart:math';
+import '../SubPages/change_username.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -16,21 +12,33 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  void _signOutAndNavigate(BuildContext context) async {
-    try {
-      await AuthService().signOut();
-      if (!context.mounted) return;
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/start_page', (Route<dynamic> route) => false);
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message ?? 'Failed to sign out'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
+  void showChangeUsernameBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (_, controller) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
+            ),
+          ),
+          child: const ChangeUsernamePage(),
         ),
-      );
-    }
+      ),
+    );
+  }
+  
+  void _signOutAndNavigate(BuildContext context) async {
+    // Navigate to start page without authentication
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/start_page', (Route<dynamic> route) => false);
   }
 
   void _showLogoutConfirmationDialog(BuildContext context) {
@@ -114,38 +122,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<DocumentSnapshot> _fetchProfileWithBackoff() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    int attempt = 0;
-    Duration delay = const Duration(milliseconds: 500);
-    final rand = Random();
-    while (true) {
-      attempt++;
-      try {
-        return await FirebaseFirestore.instance
-            .collection('users')
-            .doc(uid)
-            .get();
-      } on FirebaseException catch (e) {
-        const retryable = {
-          'unavailable',
-          'deadline-exceeded',
-          'aborted',
-          'internal',
-          'unknown',
-        };
-        if (attempt >= 5 || !retryable.contains(e.code)) {
-          rethrow;
-        }
-        final jitterMs = rand.nextInt(250);
-        await Future.delayed(delay + Duration(milliseconds: jitterMs));
-        delay = Duration(milliseconds: (delay.inMilliseconds * 2).clamp(500, 8000));
-      } catch (_) {
-        if (attempt >= 5) rethrow;
-        await Future.delayed(delay);
-        delay = Duration(milliseconds: (delay.inMilliseconds * 2).clamp(500, 8000));
-      }
-    }
+  Future<Map<String, dynamic>> _fetchProfileWithBackoff() async {
+    // Return mock user data instead of fetching from Firebase
+    return {
+      'name': 'User',
+      'email': 'user@example.com',
+      'premium': false,
+    };
   }
 
   @override
@@ -188,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // Profile Card
-                  FutureBuilder<DocumentSnapshot>(
+                  FutureBuilder<Map<String, dynamic>>(
                     future: _fetchProfileWithBackoff(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -227,8 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ],
                         );
                       }
-                      final userData =
-                          snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                      final userData = snapshot.data ?? {};
                       return Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(

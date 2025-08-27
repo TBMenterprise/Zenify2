@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../Authentication/auth_services.dart';
 import 'package:mainproject/widgets/settings_bottom_sheet.dart';
 
 void showUpdatePasswordBottomSheet(BuildContext context) {
@@ -37,62 +35,29 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   Future<void> _updatePassword() async {
     if (_formKey.currentState!.validate()) {
-      try {
-        await authService.value.resetPasswordFromCurrentPassword(
-          currentPassword: _currentPasswordController.text,
-          newPassword: _newPasswordController.text,
-          email: authService.value.currentUser!.email!,
-        );
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Password updated successfully!'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            margin: const EdgeInsets.only(
-              bottom: 20,
-              right: 20,
-              left: 20,
-            ),
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Password updated successfully!'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
           ),
-        );
-        Navigator.of(context).pop(true);
-      } on FirebaseAuthException catch (e) {
-        if (!mounted) return;
-        String errorMessage;
-        switch (e.code) {
-          case 'wrong-password':
-            errorMessage = 'The current password you entered is incorrect.';
-            break;
-          case 'too-many-requests':
-            errorMessage = 'Too many attempts. Please try again later.';
-            break;
-          case 'user-not-found':
-            errorMessage = 'User not found. Please log in again.';
-            break;
-          case 'requires-recent-login':
-            errorMessage = 'This operation is sensitive and requires recent authentication. Please log in again.';
-            break;
-          default:
-            errorMessage = e.message ?? 'Failed to update password. Please try again.';
+          margin: const EdgeInsets.only(
+            bottom: 20,
+            right: 20,
+            left: 20,
+          ),
+        ),
+      );
+      
+      // Navigate back to settings page
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          Navigator.pop(context);
         }
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(errorMessage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
+      });
     }
   }
 

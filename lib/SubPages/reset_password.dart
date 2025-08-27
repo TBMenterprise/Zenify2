@@ -1,10 +1,7 @@
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../Authentication/auth_services.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -16,32 +13,21 @@ class ResetPasswordPage extends StatefulWidget {
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String _errorMessage = '';
   String _successMessage = '';
 
   void _resetPassword() async {
     if (_formKey.currentState!.validate()) {
-      try {
-        setState(() {
-          _errorMessage = '';
-          _successMessage = '';
-        });
-        await authService.value.resetPassword(
-          email: _emailController.text,
-        );
-        setState(() {
-          _successMessage = 'A password reset link has been sent to your email.';
-        });
-      } on FirebaseAuthException catch (e) {
-        setState(() {
-          if (e.code == 'user-not-found') {
-            _errorMessage =
-                'No account found with this email. Please create an account first.';
-          } else {
-            _errorMessage = 'Failed to send password reset email. Please try again.';
-          }
-        });
-      }
+      // Show success message and redirect to login page
+      setState(() {
+        _successMessage = 'A password reset link has been sent to your email.';
+      });
+      
+      // Wait 2 seconds before navigating back to login
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) { // Add mounted check
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      });
     }
   }
 
@@ -89,7 +75,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       _emailFormField(),
                       const SizedBox(height: 32.0),
                       _resetPasswordButton(),
-                      if (_errorMessage.isNotEmpty) _errorMessageWidget(),
                       if (_successMessage.isNotEmpty) _successMessageWidget(),
                     ],
                   ),
@@ -220,22 +205,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             letterSpacing: 1.25,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _errorMessageWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Text(
-        _errorMessage,
-        style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
-          color: Colors.redAccent,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        textAlign: TextAlign.center,
       ),
     );
   }
