@@ -8,19 +8,52 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+        margin: EdgeInsets.only(
+          top: 4.0,
+          bottom: 4.0,
+          left: isUser ? screenWidth * 0.15 : 16.0,
+          right: isUser ? 16.0 : screenWidth * 0.15,
+        ),
+        constraints: BoxConstraints(
+          maxWidth: screenWidth * 0.75,
+          minWidth: 60.0,
+        ),
+        padding: const EdgeInsets.all(14.0),
         decoration: BoxDecoration(
-          color: isUser ? Colors.blueAccent : Colors.grey[300],
-          borderRadius: BorderRadius.circular(16),
+          color: isUser 
+              ? const Color(0xFF6366F1)
+              : colorScheme.surfaceContainerHighest.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20.0),
+            topRight: const Radius.circular(20.0),
+            bottomLeft: Radius.circular(isUser ? 20.0 : 4.0),
+            bottomRight: Radius.circular(isUser ? 4.0 : 20.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8.0,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Text(
           message,
           style: TextStyle(
-            color: isUser ? Colors.white : Colors.black87,
+            color: isUser 
+                ? Colors.white 
+                : colorScheme.onSurfaceVariant,
+            fontSize: 15.0,
+            fontWeight: FontWeight.w400,
+            height: 1.3,
+            letterSpacing: 0.1,
           ),
         ),
       ),
