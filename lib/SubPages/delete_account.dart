@@ -98,55 +98,37 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Text(
-                'Delete Account',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Delete Account'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        // Body
-        Expanded(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12),
-                    _subtitleText(),
-                    const SizedBox(height: 32),
-                    _passwordField(),
-                    const SizedBox(height: 16),
-                    _confirmPasswordField(),
-                    const SizedBox(height: 32),
-                    _deleteButton(),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                _subtitleText(),
+                const SizedBox(height: 32),
+                _passwordField(),
+                const SizedBox(height: 16),
+                _confirmPasswordField(),
+                const SizedBox(height: 32),
+                _deleteButton(),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
