@@ -98,19 +98,23 @@ class _ForgetPasswordOptionsPageState extends State<ForgetPasswordOptionsPage> {
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Container(
-        width: 48,
-        height: 48,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xFFF8F8F8),
-          border: Border.all(color: const Color(0xFFE5E5E5), width: 1.5),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: const Center(
-          child: Icon(
-            Icons.arrow_back,
-            color: Color(0xFF1A1A1A),
-            size: 24,
-          ),
+        child: const Icon(
+          Icons.arrow_back_ios_new,
+          color: Color(0xFF333333),
+          size: 18,
         ),
       ),
     );

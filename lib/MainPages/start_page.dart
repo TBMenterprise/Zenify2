@@ -66,7 +66,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _navigateToLogin() {
-    Navigator.pushNamed(context, '/signup');
+    Navigator.pushNamed(context, '/login');
   }
 
   @override
