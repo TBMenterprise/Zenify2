@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1080391131066",
-    "project_id": "zenify-ace50",
-    "storage_bucket": "zenify-ace50.firebasestorage.app"
+    "project_number": "94678294821",
+    "project_id": "zenify-60993",
+    "storage_bucket": "zenify-60993.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1080391131066:android:b5bfac0335a408c0d3c783",
+        "mobilesdk_app_id": "1:94678294821:android:64744926df8e7f99bdfacc",
         "android_client_info": {
           "package_name": "com.example.mainproject"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD-EGtbH_39uasngclfRHv0CBMJqs3RfjE"
+          "current_key": "AIzaSyDIu6O1PdRt5OVUziWU20rqhHq2lh-yPxo"
         }
       ],
       "services": {
