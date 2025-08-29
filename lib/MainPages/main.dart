@@ -4,6 +4,9 @@ import '../SubPages/go_premium.dart';
 import '../SubPages/change_username.dart';
 import '../SubPages/delete_account.dart';
 import '../SubPages/update_password.dart';
+import '../SubPages/verify_email.dart';
+import '../SubPages/forget_password_options.dart';
+import '../SubPages/profile_setup.dart';
 import 'chat.dart';
 import 'login.dart';
 import 'settings.dart';
@@ -29,6 +32,17 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialRoute: '/start_page',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/verify_email':
+            final email = settings.arguments as String? ?? 'user@example.com';
+            return MaterialPageRoute(
+              builder: (context) => VerifyEmailPage(email: email),
+            );
+          default:
+            return null;
+        }
+      },
       routes: {
         '/auth_layout': (context) => const StartPage(),
         '/login': (context) => const LoginPage(),
@@ -36,13 +50,15 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const ChatPage(),
         '/settings': (context) => const SettingsPage(),
         '/reset_password': (context) => const ResetPasswordPage(),
+        '/forget_password_options': (context) => const ForgetPasswordOptionsPage(),
         '/start_page': (context) => const StartPage(),
         '/user_profile_setup': (context) => const StartPage(),
         '/go_premium': (context) => const GoPremiumPage(),
         '/change_username': (context) => const ChangeUsernamePage(),
         '/delete_account': (context) => const DeleteAccountPage(),
         '/update_password': (context) => const UpdatePasswordPage(),
-      },
+        '/profile_setup': (context) => const ProfileSetupPage(),
+      }
     );
   }
 }

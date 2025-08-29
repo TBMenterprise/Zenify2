@@ -16,19 +16,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   String _successMessage = '';
 
   void _resetPassword() async {
-    if (_formKey.currentState!.validate()) {
-      // Show success message and redirect to login page
-      setState(() {
-        _successMessage = 'A password reset link has been sent to your email.';
-      });
-      
-      // Wait 2 seconds before navigating back to login
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) { // Add mounted check
-          Navigator.pushReplacementNamed(context, '/login');
-        }
-      });
-    }
+    // Navigate directly to email verification page without validation
+    Navigator.pushNamed(
+      context, 
+      '/verify_email',
+      arguments: _emailController.text.isEmpty ? 'user@example.com' : _emailController.text,
+    );
   }
 
   @override
@@ -95,12 +88,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         height: 48,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFF2D2D2D), width: 1),
+          color: const Color(0xFFF8F8F8),
+          border: Border.all(color: const Color(0xFFE5E5E5), width: 1.5),
         ),
         child: const Center(
           child: Icon(
             Icons.arrow_back,
-            color: Color(0xFF2D2D2D),
+            color: Color(0xFF1A1A1A),
             size: 24,
           ),
         ),
@@ -114,12 +108,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         'Forgot Password',
         textAlign: TextAlign.center,
         style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
-          fontSize: 30,
+          fontFamily: 'Poppins',
+          fontSize: 32,
           fontWeight: FontWeight.w700,
           height: 1.2,
-          letterSpacing: -0.2,
-          color: Color(0xFF3A3A3C),
+          letterSpacing: -0.64,
+          color: Color(0xFF1A1A1A),
         ),
       ),
     );
@@ -131,11 +125,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         'Please enter your email to reset the password',
         textAlign: TextAlign.center,
         style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
+          fontFamily: 'Poppins',
           fontSize: 16,
           fontWeight: FontWeight.w400,
-          color: Color(0xFF9E9E9E),
+          color: Color(0xFF8E8E93),
           height: 1.4,
+          letterSpacing: -0.32,
         ),
       ),
     );
@@ -143,31 +138,47 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   Widget _emailFormField() {
     return Container(
+      height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: const Color(0xFFE5E5E5),
+          width: 1.5,
+        ),
       ),
       child: TextFormField(
         controller: _emailController,
-        cursorColor: const Color(0xFF2D2D2D),
+        cursorColor: const Color(0xFF007AFF),
         style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
+          fontFamily: 'Poppins',
           fontSize: 16,
-          color: Color(0xFF2D2D2D),
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF1A1A1A),
+          letterSpacing: -0.32,
         ),
         decoration: InputDecoration(
-          hintText: 'Email address',
+          hintText: 'Enter Your Email',
           hintStyle: const TextStyle(
-            fontFamily: 'HelveticaNeue',
+            fontFamily: 'Poppins',
             fontSize: 16,
-            color: Color(0xFF9E9E9E),
+            fontWeight: FontWeight.w500,
+            color: Color(0xFFC2C3CB),
+            letterSpacing: -0.32,
           ),
-          filled: true,
-          fillColor: const Color(0xFFF5F5F5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: const Icon(
+              Icons.email_outlined,
+              size: 24,
+              color: Color(0xFFC2C3CB),
+            ),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+          filled: false,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -184,25 +195,39 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   Widget _resetPasswordButton() {
     return Container(
+      height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(30),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF007AFF), Color(0xFF0051D5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF007AFF).withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ElevatedButton(
         onPressed: _resetPassword,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 64, 137, 226),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-          minimumSize: const Size(double.infinity, 56),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          minimumSize: const Size(double.infinity, 60),
           elevation: 0,
         ),
         child: const Text(
-          'SEND RESET EMAIL',
+          'Reset',
           style: TextStyle(
-            fontFamily: 'HelveticaNeue',
+            fontFamily: 'Poppins',
             color: Colors.white,
             fontWeight: FontWeight.w600,
-            fontSize: 16,
-            letterSpacing: 1.25,
+            fontSize: 18,
+            letterSpacing: -0.36,
           ),
         ),
       ),
@@ -215,10 +240,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       child: Text(
         _successMessage,
         style: const TextStyle(
-          fontFamily: 'HelveticaNeue',
-          color: Color.fromARGB(255, 64, 137, 226),
+          fontFamily: 'Poppins',
+          color: Color(0xFF007AFF),
           fontSize: 14,
           fontWeight: FontWeight.w500,
+          letterSpacing: -0.28,
         ),
         textAlign: TextAlign.center,
       ),
