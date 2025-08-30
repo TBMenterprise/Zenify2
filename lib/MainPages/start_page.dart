@@ -31,12 +31,12 @@ class _StartPageState extends State<StartPage> {
       subtitle: 'Experience the next generation of AI technology designed to enhance your productivity and creativity.',
     ),
     OnboardingContent(
-      image: 'assets/chatbackground.png',
+      image: 'assets/signinimage2.png',
       title: 'Chat With Your\nFavorite AI',
       subtitle: 'Engage in meaningful conversations with advanced AI that understands your needs and preferences.',
     ),
     OnboardingContent(
-      image: 'assets/PremiumBackground.png',
+      image: 'assets/thinkingimage.png',
       title: 'Boost Your Mind\nPower with AI',
       subtitle: 'Amplify your thinking capabilities and discover new possibilities with intelligent AI assistance.',
     ),
@@ -61,11 +61,14 @@ class _StartPageState extends State<StartPage> {
         curve: Curves.easeInOut,
       );
     } else {
-      _navigateToLogin();
+      _navigateTosignup();
     }
   }
 
-  void _navigateToLogin() {
+  void _navigateTosignup() {
+    Navigator.pushNamed(context, '/signup');
+  }
+    void _navigateToLogin() {
     Navigator.pushNamed(context, '/login');
   }
 

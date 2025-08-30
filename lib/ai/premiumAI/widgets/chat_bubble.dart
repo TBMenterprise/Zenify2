@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -7,7 +8,7 @@ class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.message, required this.isUser});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -17,13 +18,14 @@ class ChatBubble extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(
           top: 4.0,
-          bottom: 4.0,
+          bottom: 0,
           left: isUser ? screenWidth * 0.15 : 16.0,
           right: isUser ? 16.0 : screenWidth * 0.15,
         ),
         constraints: BoxConstraints(
           maxWidth: screenWidth * 0.75,
           minWidth: 60.0,
+          maxHeight: screenWidth > 600  ? 100:70  ,
         ),
         padding: const EdgeInsets.all(14.0),
         decoration: BoxDecoration(
@@ -50,7 +52,7 @@ class ChatBubble extends StatelessWidget {
             color: isUser 
                 ? Colors.white 
                 : colorScheme.onSurfaceVariant,
-            fontSize: 15.0,
+            fontSize: screenWidth > 600 ? 25.0 : 16.0,
             fontWeight: FontWeight.w400,
             height: 1.3,
             letterSpacing: 0.1,

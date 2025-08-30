@@ -224,10 +224,11 @@ class _SendMessageButtonState extends State<SendMessageButton>
         builder: (context, child) {
           return Transform.rotate(
             angle: _rotationAnimation.value * 2 * 3.14159,
-            child: Icon(
+            child: Center ( child:  Icon(
               Icons.sync,
               color: iconColor,
               size: iconSize,
+            ),
             ),
           );
         },
@@ -237,7 +238,7 @@ class _SendMessageButtonState extends State<SendMessageButton>
     // Use SVG icon if enabled and available
     if (widget.useSvgIcon) {
       final svgPath = widget.svgAssetPath ?? 'assets/sendmessage.svg';
-      return SvgPicture.asset(
+      return Center(child:  SvgPicture.asset(
         svgPath,
         width: iconSize,
         height: iconSize,
@@ -245,6 +246,7 @@ class _SendMessageButtonState extends State<SendMessageButton>
           iconColor,
           BlendMode.srcIn,
         ),
+      ),
       );
     }
     

@@ -464,9 +464,9 @@ class _ProfileSetupPageState extends State<ProfileSetupPage> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          const SizedBox(height: 32),
+          const SizedBox(height: 4),
           _buildStepTitle(),
-          const SizedBox(height: 48),
+          
           _buildStepCard(
             child: _profileImageSection(),
             icon: Icons.camera_alt_outlined,

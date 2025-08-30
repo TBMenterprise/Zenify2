@@ -16,7 +16,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: const Text('Settings'), 
         centerTitle: true,
         leading: Padding(
@@ -104,7 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
   Widget profilecard(){
-    return SizedBox( width: double.infinity , child: Card(// Adjusted margin
+    return Container( width: double.infinity , color: Colors.white, child: Card(// Adjusted margin
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50), // Adjusted padding
                 child: Row(

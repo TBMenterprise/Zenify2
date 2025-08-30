@@ -472,7 +472,7 @@ class _SignUpPageState extends State<SignUpPage> {
             children: <TextSpan>[
               const TextSpan(text: 'Already Have An Account? '),
               TextSpan(
-                text: 'Sign In',
+                text: 'LOGIN',
                 style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
