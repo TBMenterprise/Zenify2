@@ -4,13 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../ai/premiumAI/services/ai_service.dart';
 import '../ai/premiumAI/widgets/chat_bubble.dart';
 import '../widgets/send_message_button.dart';
-
-class ChatMessage {
-  final String text;
-  final bool isUser;
-
-  ChatMessage({required this.text, required this.isUser});
-}
+import 'package:mainproject/models/chat_message.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -412,7 +406,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       _isTyping = true;
     });
 
-    final aiResponse = await _aiService.getResponse(text);
+    final aiResponse = await _aiService.getResponse(_messages.reversed.toList());
 
     setState(() {
       _messages.insert(0, ChatMessage(text: aiResponse, isUser: false));
